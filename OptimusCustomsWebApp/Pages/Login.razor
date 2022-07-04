@@ -1,0 +1,50 @@
+﻿@page "/"
+@page "/login"
+
+@if (@Model != null)
+{
+
+    <div class="container-fluid">
+        <div class="" style="margin-top:200px">
+            <div class="rounded d-flex justify-content-center">
+                <div class="col-md-4 col-sm-12 shadow-lg p-5 bg-light">
+                    <div class="text-center">
+                        <h3 class="text-primary">Optimus Customs</h3>
+                    </div>
+
+                    <EditForm Model="@Model" OnValidSubmit="SignIn">
+                        <DataAnnotationsValidator />
+                        <div class="p-4">
+                            <div class="input-group mb-3">
+                                <span class="input-group-text bg-primary">
+                                    <i class="oi oi-person text-white"></i>
+                                </span>
+                                <InputText type="text" class="form-control" placeholder="Usuario" @bind-Value="Model.Username" />
+                            </div>
+                            <div class="input-group mb-3">
+                                <span class="input-group-text bg-primary">
+                                    <i class="oi oi-key text-white"></i>
+                                </span>
+                                <InputText type="password" class="form-control" placeholder="Contraseña" @bind-Value="Model.Password" />
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                                <label class="form-check-label" for="flexCheckDefault">
+                                    Recuerdame
+                                </label>
+                            </div>
+                            <input class="btn btn-primary text-center mt-2" type="submit" value="Iniciar Sesión">
+                            <p class="text-center mt-5">
+                                ¿No tienes una cuenta?
+                                <a href="/signup">
+                                    <span class="text-primary">Regístrate</span>
+                                </a>
+                            </p>
+                            <p class="text-center text-primary"><a href="">¿Olvide mi contraseña?</a></p>
+                        </div>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+    </div>
+}

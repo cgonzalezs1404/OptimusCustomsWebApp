@@ -1,0 +1,156 @@
+﻿@page "/factura"
+@using OptimusCustomsWebApp.Pages
+
+<h1>Facturas</h1>
+
+
+
+<div class="card">
+    <button class="btn btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSearch" aria-expanded="false">Búsqueda</button>
+    <div class="collapse multi-collapse" id="collapseSearch">
+        <div>
+            <form>
+                <div class="row">
+                    <div class="col">
+                        <label class="search-label">Desde:</label>
+                    </div>
+                    <div class="col">
+                        <input type="date" class="form-control" @bind="FromDate"/>
+                    </div>
+                    <div class="col">
+                        <label class="search-label">Tipo:</label>
+                    </div>
+                    <div class="col">
+                        <select class="form-control">
+                            <option>Todos</option>
+                            <option>Cliente</option>
+                            <option>Proveedor</option>
+                        </select>
+                    </div>
+                    <div class="col">
+                        <label class="search-label">Razòn Social:</label>
+                    </div>
+                    <div class="col">
+                        <select class="form-control">
+                            <option>Todos</option>
+                            <option>OPTIMUS CUSTOMS SA DE CV</option>
+                            <option>RECICLADOS Y METALES PELUCHE S DE RL DE CV</option>
+                            <option>JOSE RODRIGUEZ CANTERO</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <label class="search-label">Hasta:</label>
+                    </div>
+                    <div class="col">
+                        <input type="date" class="form-control" @bind="ToDate"/>
+                    </div>
+                    <div class="col">
+                        <label class="search-label">Estado:</label>
+                    </div>
+                    <div class="col">
+                        <select class="form-control">
+                            <option>Todos</option>
+                            <option>Normal</option>
+                            <option>Por vencer</option>
+                            <option>Vencido</option>
+                        </select>
+                    </div>
+                    <div class="col">
+                        <label class="search-label">Factura aprobada:</label>
+                    </div>
+                    <div class="col">
+                        <select class="form-control">
+                            <option>Todos</option>
+                            <option>Si</option>
+                            <option>No</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-primary" @onclick="@(async () => await OnSearch())"><span class="oi oi-browser" />Buscar</button>
+                <button type="button" class="btn btn-warning"><span class="oi oi-reload" />Limpiar</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+@if (List == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table-main table-responsive">
+        <thead>
+            <tr>
+                <th class="row-10">Id</th>
+                <th class="row-10">Tipo</th>
+                <th class="row-10">Estado</th>
+                <th class="row-30">Razón Social</th>
+                <th class="row-20">Emisión</th>
+                <th class="row-20">RFC</th>
+                <th class="row-10">Serie</th>
+                <th class="row-10">Folio</th>
+                <th class="row-20">Total</th>
+                @*<th class="row-20">Descripción</th>*@
+                <th class="row-10">Aprobada</th>
+                <th class="row-20">Acciones</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var factura in List)
+            {
+                <tr>
+                    <td class="row-10">@factura.IdFactura</td>
+                    <td class="row-10">@factura.IdTipoFactura</td>
+                    <td class="row-10">@factura.IdEstadoFactura</td>
+                    <td class="row-30">@factura.RazonSocial</td>
+                    <td class="row-20">@factura.FechaEmision.ToString("MM/dd/yyyy")</td>
+                    <td class="row-20">@factura.RFC</td>
+                    <td class="row-10">@factura.Serie</td>
+                    <td class="row-10">@factura.Folio</td>
+                    <td class="row-20">@factura.Total.ToString("C2")</td>
+                    @*<td class="row-20">@factura.Descripcion</td>*@
+                    <td class="row-10">
+                        <input type="checkbox" checked="@factura.EsAprobado" readonly>
+
+                    </td>
+                    <td class="row-20">
+                        <div class="btn-group-sm">
+                            <button class="btn btn-success btn-sm" title="Ver"><span class="oi oi-eye" aria-hidden="true" /></button>
+                            <a class="btn btn-info btn-sm" title="Editar" href="/factura/@factura.IdFactura"><span class="oi oi-pencil" aria-hidden="true" /></a>
+                            <button class="btn btn-danger btn-sm" title="Borrar" @onclick="() => OpenDeleteDialog(factura)"><span class="oi oi-trash" aria-hidden="true" /></button>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+
+        <tfoot>
+            <tr>
+                <td style="text-align:left">
+                    <div class="btn-group" role="group">
+                        <a class="btn btn-success" href="/factura/create"><span class="oi oi-plus" /> Cargar Factura</a>
+                    </div>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+
+    
+
+
+
+
+    @if (DeleteDialogOpen)
+    {
+        <ModalDialog Title="Are you sure?"
+                     Text="Do you want to delete this entry?"
+                     OnClose="@OnDeleteDialogClose">
+        </ModalDialog>
+    }
+}

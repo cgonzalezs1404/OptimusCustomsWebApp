@@ -1,0 +1,9 @@
+﻿@page "/home"
+<h1>Home</h1>
+
+<p>You have logged In: </p>
+
+<label class="col-md-12"><span>Username: </span>@Usuario.Username</label>
+<label class="col-md-12"><span>Password: </span>@Usuario.Password</label>
+
+<button @onclick="LogOut">Logout</button>

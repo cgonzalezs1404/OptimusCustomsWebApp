@@ -1,0 +1,65 @@
+﻿@page "/usuario"
+@using OptimusCustomsWebApp.Pages
+
+<h1>Usuarios</h1>
+
+@if (ModelList == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <p class="align-self-end">
+        <input type="text" id="txtSearch" placeholder="Buscar" class="form-control" />
+    </p>
+
+    <div class="row">
+        <table class="table-main table-responsive">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Apellido</th>
+                    <th>RFC</th>
+                    <th>Razón Social</th>
+                    <th>Email</th>
+                    <th>Teléfono</th>
+                    <th>Dirección Fiscal</th>
+                    <th>Tipo de usuario</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var model in ModelList)
+                {
+                <tr>
+                    <td>@model.Nombre</td>
+                    <td>@model.Apellido</td>
+                    <td>@model.RFC</td>
+                    <td>@model.RazonSocial</td>
+                    <td>@model.Mail</td>
+                    <td>@model.Telefono</td>
+                    <td>@model.DireccionFiscal</td>
+                    <td>@model.TipoUsuario</td>
+                    <td>
+                        <div class="btn-group-sm">
+                            <a class="btn btn-info" href="/cliente/@model.IdUsuario"><span class="oi oi-pencil" aria-hidden="true" /> Editar</a>
+                            <button class="btn btn-danger" @onclick="() => OpenDeleteDialog(model)"><span class="oi oi-trash" aria-hidden="true" />Borrar</button>
+                        </div>
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+
+    </div>
+
+
+    @if (DeleteDialogOpen)
+    {
+        <ModalDialog Title="Are you sure?"
+                     Text="Do you want to delete this entry?"
+                     OnClose="@OnDeleteDialogClose">
+        </ModalDialog>
+    }
+}

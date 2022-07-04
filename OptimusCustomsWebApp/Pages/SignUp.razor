@@ -1,0 +1,59 @@
+﻿@page "/signup"
+
+@if (@Model != null)
+{
+
+    <div class="container-fluid">
+        <div class="" style="margin-top:100px">
+            <div class="rounded d-flex justify-content-center">
+                <div class="col-md-4 col-sm-12 shadow-lg p-5 bg-light">
+                    <div class="text-center">
+                        <h3 class="text-primary">Optimus Customs</h3>
+                    </div>
+
+                    <EditForm Model="@Model" OnValidSubmit="Register">
+                        <DataAnnotationsValidator />
+                        <div class="p-4">
+                            <div class="input-group mb-3">
+
+                                <InputText type="text" class="form-control" placeholder="Nombre(s)" @bind-Value="Model.Nombre" />
+                            </div>
+                            <div class="input-group mb-3">
+                                <InputText type="text" class="form-control" placeholder="Apellido(s)" @bind-Value="Model.Apellido" />
+                            </div>
+                            <div class="input-group mb-3">
+                                <InputText type="text" class="form-control" placeholder="RFC" @bind-Value="Model.RFC" />
+                            </div>
+                            <div class="input-group mb-3">
+                                <InputText type="text" class="form-control" placeholder="Razón Social" @bind-Value="Model.RazonSocial" />
+                            </div>
+                            <div class="input-group mb-3">
+                                <InputText type="email" class="form-control" placeholder="E-Mail" @bind-Value="Model.Mail" />
+                            </div>
+                            <div class="input-group mb-3">
+                                <InputText type="phone" class="form-control" placeholder="Teléfono" @bind-Value="Model.Telefono" />
+                            </div>
+                            <div class="input-group mb-3">
+                                <InputText type="text" class="form-control" placeholder="Dirección" @bind-Value="Model.DireccionFiscal" />
+                            </div>
+                            <div class="input-group mb-3">
+                                <InputText type="password" class="form-control" placeholder="Contraseña" @bind-Value="Model.Password" />
+                            </div>
+                            <div class="input-group mb-3">
+                                <InputSelect class="form-control" @bind-Value="IdTipoUsuario">
+                                    @foreach (var privilegio in TipoUsuario)
+                                        {
+                                        <option value="@privilegio.Id">@privilegio.Nombre</option>
+                                        }
+                                </InputSelect>
+                            </div>
+
+                            <input class="btn btn-primary text-center mt-2" type="submit" value="Registrarse" />
+                            <input class="btn btn-primary text-center mt-2" type="submit" value="Cancelar" />
+                        </div>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+    </div>
+}

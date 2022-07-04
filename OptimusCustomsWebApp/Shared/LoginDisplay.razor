@@ -1,0 +1,27 @@
+﻿@*<AuthorizeView>
+    <Authorized>
+        <a href="Identity/Account/Manage">Hello, @context.User.Identity.Name!</a>
+        <form method="post" action="Identity/Account/LogOut">
+            <button type="submit" class="nav-link btn btn-link">Log out</button>
+        </form>
+    </Authorized>
+    <NotAuthorized>
+        <a href="Account/Register">Register</a>
+        <a href="Account/Login">Log in</a>
+    </NotAuthorized>
+</AuthorizeView>*@
+
+
+@if (Usuario.Username != null)
+{
+    <a href="">Hello, @Usuario.Username!</a>
+
+    <form>
+        <button type="button" class="nav-link btn btn-link" @onclick="LogOut">Salir</button>
+    </form>
+}
+else
+{
+    <a href="/signup">Registrarse</a>
+    <a href="/login">Iniciar sesión</a>
+}

@@ -1,0 +1,119 @@
+﻿@page "/factura/create"
+@page "/factura/{IdFactura}"
+
+@using Toolbelt.Blazor.FileDropZone
+
+
+@if (Model == null)
+{
+
+}
+else
+{
+    <EditForm Model="@Model">
+        <h3>Editar Factura</h3>
+
+        <div class="form-group row">
+            <label for="" class="col-sm-2 col-form-label">
+                Razón Social
+            </label>
+            <div class="col-sm-10">
+                <InputText id="nombre" class="form-control" placeholder="Razon Social" @bind-Value="Model.RazonSocial" />
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label for="" class="col-sm-2 col-form-label">
+                RFC
+            </label>
+            <div class="col-sm-10">
+                <InputText id="rfc" class="form-control" placeholder="RFC" @bind-Value="Model.RFC" />
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label for="" class="col-sm-2 col-form-label">
+                Serie
+            </label>
+            <div class="col-sm-10">
+                <InputText id="serie" class="form-control" placeholder="Serie" @bind-Value="Model.Serie" />
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label for="" class="col-sm-2 col-form-label">
+                Folio
+            </label>
+            <div class="col-sm-10">
+                <InputText id="folio" class="form-control" placeholder="Folio" @bind-Value="Model.Folio" />
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label for="" class="col-sm-2 col-form-label">
+                Fecha Emisión
+            </label>
+            <div class="col-sm-10">
+                <InputDate id="fecha" class="form-control" placeholder="Fecha Factura" @bind-Value="Model.FechaEmision" />
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label for="" class="col-sm-2 col-form-label">
+                Concepto
+            </label>
+            <div class="col-sm-10">
+                <InputText id="concepto" class="form-control" placeholder="Concepto" @bind-Value="Model.Descripcion" />
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label for="" class="col-sm-2 col-form-label">
+                Total
+            </label>
+            <div class="col-sm-10">
+                <InputNumber id="total" class="form-control" placeholder="Total" @bind-Value="Model.Total" />
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label for="" class="col-sm-2 col-form-label">
+                Estado de aprobación
+            </label>
+            <div class="col-sm-10">
+                <InputCheckbox id="total" class="form-control" placeholder="Aprobado" @bind-Value="Model.EsAprobado" />
+            </div>
+        </div>
+
+        @if (IdFactura == null || IdFactura.Equals(""))
+        {
+            <div class="form-group row">
+                <label for="" class="col-sm-2 col-form-label">
+                    Archivos
+                </label>
+                <div class="col-sm-10">
+                    <FileDropZone>
+                        <InputFile OnChange="@OnInputFileChangeAsync" multiple />
+                    </FileDropZone>
+                </div>
+            </div>
+        }
+
+
+        <div class="form-group row">
+            <div class="btn-group">
+                @if (IdFactura != null && !IdFactura.Equals(""))
+                {
+                    <button class="btn btn-success" @onclick="@(async () => await OnUpdate())">Actualizar</button>
+
+                }
+                else
+                {
+                    <button class="btn btn-success" @onclick="@(async () => await OnCreate())">Guardar</button>
+                }
+                <button class="btn btn-danger" @onclick="@(async () => await OnCancel())">Cancelar</button>
+            </div>
+        </div>
+
+    </EditForm>
+}
