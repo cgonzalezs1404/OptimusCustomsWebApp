@@ -60,5 +60,12 @@ namespace OptimusCustomsWebApp.Views
             StateHasChanged();
             IdFactura = model.IdFactura;
         }
+
+        private string SetRowStyle(string tipoFactura)
+        {
+            if (tipoFactura.Equals("Por vencer")) { return "background-color: #F1EB9C; color: black;"; }
+            else if (tipoFactura.Equals("Vencido")) { return "background-color: #FF7276; color: black;"; }
+            else { return ""; }
+        }
     }
 }

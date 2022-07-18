@@ -104,7 +104,8 @@ else
         <tbody>
             @foreach (var factura in List)
             {
-                <tr>
+                <tr style="@SetRowStyle(factura.EstadoFactura)">
+
                     <td class="row-10">@factura.IdFactura</td>
                     <td class="row-10">@factura.TipoFactura</td>
                     <td class="row-10">@factura.EstadoFactura</td>
