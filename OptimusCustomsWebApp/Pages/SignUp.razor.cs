@@ -33,9 +33,15 @@ namespace OptimusCustomsWebApp.Pages
             var response = await UsuarioService.CreateUsuario(Model);
             if (response.IsSuccessStatusCode)
             {
-                await JSRuntime.InvokeAsync<string>(
-            "clientJsMethods.RedirectTo", "/home");
+                await JSRuntime.InvokeAsync<string>("clientJsMethods.RedirectTo", "/home");
             }
+
+        }
+
+        private async Task Cancel()
+        {
+            await JSRuntime.InvokeAsync<string>("clientJsMethods.RedirectTo", "/home");
+
 
         }
     }

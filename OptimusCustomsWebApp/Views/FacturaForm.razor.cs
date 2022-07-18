@@ -95,9 +95,7 @@ namespace OptimusCustomsWebApp.Views
                         FileStream = fs,
                         FileSize = fs.Length
                     };
-                    Model.FileSizeXml = fm.FileSize;
                     Model.FileXml = fm.FileStream;
-                    Model.FileSizePdf = 0;
                     Model.FilePdf = new byte[0];
 
 

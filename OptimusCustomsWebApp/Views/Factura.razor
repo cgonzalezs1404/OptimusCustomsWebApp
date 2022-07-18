@@ -1,7 +1,7 @@
 ﻿@page "/factura"
 @using OptimusCustomsWebApp.Pages
 
-<h1>Facturas</h1>
+@*<h1>Facturas</h1>*@
 
 
 
@@ -106,8 +106,8 @@ else
             {
                 <tr>
                     <td class="row-10">@factura.IdFactura</td>
-                    <td class="row-10">@factura.IdTipoFactura</td>
-                    <td class="row-10">@factura.IdEstadoFactura</td>
+                    <td class="row-10">@factura.TipoFactura</td>
+                    <td class="row-10">@factura.EstadoFactura</td>
                     <td class="row-30">@factura.RazonSocial</td>
                     <td class="row-20">@factura.FechaEmision.ToString("MM/dd/yyyy")</td>
                     <td class="row-20">@factura.RFC</td>
