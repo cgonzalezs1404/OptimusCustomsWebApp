@@ -51,7 +51,7 @@ a, .btn-link {
 
 tbody {
     display: block;
-    height: 600px;
+    height: 700px;
     overflow: auto;
 }
 
@@ -71,42 +71,25 @@ tbody {
         white-space: initial;
         overflow: hidden;
         /*text-overflow: ellipsis;*/
-        height: 60px;
+        height: auto;
         font-size: smaller;
         font-family: Verdana;
     }
 
-/* Column widths are based on these cells */
-.row-10 {
-    width: 10%;
-}
+    .table-main th {
+        background: darkblue;
+        color: white;
+    }
 
-.row-40 {
-    width: 40%;
-}
+    .table-main td,
+    .table-main th {
+        text-align: center;
+        padding: 5px 10px;
+    }
 
-.row-30 {
-    width: 30%;
-}
-
-.row-20 {
-    width: 20%;
-}
-
-.table-main th {
-    background: darkblue;
-    color: white;
-}
-
-.table-main td,
-.table-main th {
-    text-align: center;
-    padding: 5px 10px;
-}
-
-.table-main tr:nth-child(even) {
-    background: lightblue;
-}
+    .table-main tr:nth-child(even) {
+        background: lightblue;
+    }
 
 .search-label {
     font-family: Verdana;
@@ -141,4 +124,47 @@ tbody {
 
 .topnav-right {
     float: right;
+}
+
+.main-container {
+    max-width: auto;
+    margin: 0 auto;
+    /*border: solid 10px green;*/
+    /*padding: 10px;*/
+    /*margin-top: 10px;*/
+}
+
+    .main-container * {
+        /*padding: 10px;*/
+        /*background: #aaa;
+        border: dashed 5px #000;*/
+    }
+
+        .main-container * + * {
+            /*margin-top: 20px;*/
+        }
+
+.main-header {
+    height: auto;
+    padding-top: 10px;
+    /*background: #aaa;
+    border-color: red;*/
+}
+
+.main-content {
+    min-height: auto;
+}
+
+.main-footer {
+    position: -webkit-sticky;
+    position: sticky;
+    bottom: 0;
+    padding-top: 50px;
+    /*border-color: red;*/
+}
+
+.main-header {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
 }
