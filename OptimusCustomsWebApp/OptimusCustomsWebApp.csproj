@@ -13,6 +13,7 @@
   <ItemGroup>
     <Content Remove="Pages\FetchData.razor" />
     <Content Remove="Pages\Index.razor" />
+    <Content Remove="wwwroot\css\bootstrap\bootstrap.min.css.map" />
   </ItemGroup>
 
   <ItemGroup>

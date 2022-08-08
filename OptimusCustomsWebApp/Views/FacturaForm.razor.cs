@@ -134,7 +134,7 @@ namespace OptimusCustomsWebApp.Views
                                     result.FechaEmision = DateTime.Parse(node.Attribute("Fecha").Value);
                                     result.Total = Double.Parse(node.Attribute("Total").Value);
                                     result.Folio = node.Attribute("Folio").Value;
-                                    result.Serie = node.Attribute("Serie").Value;
+                                    result.Serie = node.Attribute("Serie") is null ? "" : node.Attribute("Serie").Value;
                                     break;
                                 case "Emisor":
                                     if (node.Attribute("Rfc").Value.Equals("OCU180309119")) { result.IdTipoFactura = 1; }

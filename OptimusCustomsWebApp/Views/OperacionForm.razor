@@ -1,0 +1,66 @@
+﻿@page "/operacion/create"
+@page "/operacion/{IdOperacion}"
+
+@using Toolbelt.Blazor.FileDropZone
+
+
+<h3>Editar Facturas</h3>
+<div id="content">
+    @if (Model == null)
+    {
+
+    }
+    else
+    {
+        <div class="card">
+            <div class="card-body">
+                <EditForm Model="@Model">
+                    <form class="row">
+                        <div class="col-md-12">
+                            <label class="form-label">Operación</label>
+                            <InputText id="noOperacion" class="form-control" placeholder="# Operación" @bind-Value="Model.NumOperacion" />
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label">Usuario</label>
+                            <InputSelect id="cliente" class="form-control" placeholder="Cliente" @bind-Value="IdUsuario">
+                                @if (UsersList != null)
+                                    {
+                                    @foreach (var user in UsersList)
+                                        {
+                                        <option value="@user.Id" selected="@(user.Id == Model.IdUsuario)">@user.Nombre</option>
+                                        }
+                                    }
+
+                            </InputSelect>
+                        </div>
+
+                        <div class="col-md-12">
+                            <label class="form-label">Tipo Operación</label>
+                            <InputSelect id="cliente" class="form-control" placeholder="Cliente" @bind-Value="IdTipoOperacion">
+                                @if (UsersList != null)
+                                    {
+                                    @foreach (var op in TipoOperacionList)
+                                        {
+                                        <option value="@op.Id" selected="@(op.Id == Model.IdTipoOperacion)">@op.Nombre</option>
+                                        }
+                                    }
+
+                            </InputSelect>
+                        </div>
+
+                        <div class="col-md-2">
+                            <br>
+                            @if (IdOperacion != null && !IdOperacion.Equals(""))
+                            {<input type="button" class="btn btn-success" @onclick="@(async () => await OnUpdate())" value="Actualizar"> }
+                            else
+                            { <input type="button" class="btn btn-success" @onclick="@(async () => await OnCreate())" value="Gaurdar">}
+                            <input type="button" class="btn btn-danger" @onclick="@(async () => await OnCancel())" value="Cancelar">
+                        </div>
+                    </form>
+                </EditForm>
+            </div>
+        </div>
+
+    }
+</div>
+

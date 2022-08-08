@@ -48,11 +48,13 @@ namespace OptimusCustomsWebApp
             services.AddSingleton<FacturaService>();
             services.AddSingleton<UsuarioService>();
             services.AddSingleton<CatalogoService>();
+            services.AddSingleton<OperacionService>();
 
             //Carga de clientes HTTP para invocacion de API REST
-            services.AddHttpClient<IFactura, FacturaService>(client => { client.BaseAddress = new Uri("http://localhost:43248/"); });
-            services.AddHttpClient<IUsuario, UsuarioService>(client => { client.BaseAddress = new Uri("http://localhost:43248/"); });
-            services.AddHttpClient<ICatalogo, CatalogoService>(client => { client.BaseAddress = new Uri("http://localhost:43248/"); });
+            services.AddHttpClient<IFactura, FacturaService>(client => { client.BaseAddress = new Uri("http://localhost:43248/Factura"); });
+            services.AddHttpClient<IUsuario, UsuarioService>(client => { client.BaseAddress = new Uri("http://localhost:43248/Usuario"); });
+            services.AddHttpClient<ICatalogo, CatalogoService>(client => { client.BaseAddress = new Uri("http://localhost:43248/Catalogos"); });
+            services.AddHttpClient<IOperacion, OperacionService>(client => { client.BaseAddress = new Uri("http://localhost:43248/Operacion"); });
 
             services.AddRazorPages();
             services.AddServerSideBlazor();

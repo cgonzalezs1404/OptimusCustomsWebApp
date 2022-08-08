@@ -9,7 +9,6 @@ namespace OptimusCustomsWebApp.Model
     public class SessionData
     {
         [Required]
-        [EmailAddress]
         public string Username { get; set; }
         [Required]
         public string Password { get; set; }

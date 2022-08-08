@@ -30,8 +30,8 @@ namespace OptimusCustomsWebApp.Data.Service
 
         public async Task<FacturaModel> GetFactura(int idFactura)
         {
-            var list = await httpClient.GetFromJsonAsync<List<FacturaModel>>("http://localhost:43248/Factura");
-            return list.FirstOrDefault(t => t.IdFactura == idFactura);
+            var result = await httpClient.GetFromJsonAsync<FacturaModel>("http://localhost:43248/Factura/" + idFactura);
+            return result;
         }
 
         public async Task<HttpResponseMessage> CreateFactura(FacturaModel model)
