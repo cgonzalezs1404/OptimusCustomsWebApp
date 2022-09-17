@@ -106,5 +106,38 @@ namespace OptimusCustomsWebApp.Data.Service
             }
             return null;
         }
+
+        public async Task<OperacionModel> ValidateOperacion(string operacion)
+        {
+            string endpoint = "http://localhost:43248/Operacion/validate?numOperacion=" + operacion;
+            var response = await httpClient.GetAsync(endpoint, HttpCompletionOption.ResponseHeadersRead);
+
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                if (response.Content is object && response.Content.Headers.ContentType.MediaType == "application/json")
+                {
+                    var contentStream = await response.Content.ReadAsStreamAsync();
+
+                    using var streamReader = new StreamReader(contentStream);
+                    using var jsonReader = new JsonTextReader(streamReader);
+
+                    JsonSerializer serializer = new JsonSerializer();
+
+                    try
+                    {
+                        return serializer.Deserialize<OperacionModel>(jsonReader);
+                    }
+                    catch (JsonReaderException)
+                    {
+                        Console.WriteLine("Invalid JSON.");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("HTTP Response was invalid and cannot be deserialised.");
+                }
+            }
+            return null;
+        }
     }
 }

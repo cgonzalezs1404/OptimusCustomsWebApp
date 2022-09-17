@@ -23,18 +23,30 @@ namespace OptimusCustomsWebApp.Views
         [Inject]
         private IWebHostEnvironment Environment { get; set; }
         public FacturaModel Model { get; set; }
+        public OperacionModel OpModel { get; set; }
 
         [Inject]
         public FacturaService Service { get; set; }
+        [Inject]
+        public OperacionService OperacionService { get; set; }
 
         [Parameter]
         public string IdFactura { get; set; }
+        public string NumOp { get; set; }
+        public RenderFragment DynamicFragment { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public bool? IsOperationValid { get; set; }
+        public bool FileSelected { get; set; }
 
         protected async override Task OnInitializedAsync()
         {
             await Task.Factory.StartNew(() =>
             {
                 Model = new FacturaModel();
+                NumOp = "";
             });
         }
 
@@ -43,6 +55,10 @@ namespace OptimusCustomsWebApp.Views
             if (IdFactura != null && !IdFactura.Equals(""))
             {
                 Model = await Service.GetFactura(int.Parse(IdFactura));
+                if (Model != null && Model.IdFactura != 0)
+                {
+                    OpModel = await OperacionService.GetOperacion(Model.IdOperacion);
+                }
             }
 
         }
@@ -73,6 +89,30 @@ namespace OptimusCustomsWebApp.Views
             }
         }
 
+        private async Task OnValidateOperacion()
+        {
+
+            if (!NumOp.Equals(""))
+            {
+                var response = await OperacionService.ValidateOperacion(NumOp);
+                if (response != null && !response.NumOperacion.Equals(""))
+                {
+                    IsOperationValid = true;
+                }
+                else
+                {
+                    IsOperationValid = false;
+                }
+            }
+            else
+            {
+                IsOperationValid = false;
+            }
+            DynamicFragment = RenderComponent();
+            ValidationClass();
+
+        }
+
         private async Task OnInputFileChangeAsync(InputFileChangeEventArgs e)
         {
             try
@@ -97,7 +137,7 @@ namespace OptimusCustomsWebApp.Views
                     };
                     Model.FileXml = fm.FileStream;
                     Model.FilePdf = new byte[0];
-
+                    FileSelected = true;
 
 
                 }
@@ -110,7 +150,7 @@ namespace OptimusCustomsWebApp.Views
 
         private async Task<FacturaModel> CargaFactura(IBrowserFile file)
         {
-            FacturaModel result = null;
+            FacturaModel result = Model;
             try
             {
                 XDocument xmlDocument = new XDocument();
@@ -165,6 +205,68 @@ namespace OptimusCustomsWebApp.Views
             return result;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        private RenderFragment RenderComponent() => builder =>
+        {
+            if (!NumOp.Equals(""))
+            {
+                if (IsOperationValid.Value)
+                {
+                    builder.OpenElement(1, "label");
+                    builder.AddAttribute(2, "class", "text-success");
+                    builder.AddContent(3, "Número de operación válido");
+                    builder.CloseElement();
+                }
+                else
+                {
+                    builder.OpenElement(1, "label");
+                    builder.AddAttribute(2, "class", "text-danger");
+                    builder.AddContent(3, "Número de operación inválido");
+                    builder.CloseElement();
+                }
+            }
+            else
+            {
+                builder.OpenElement(1, "label");
+                builder.AddAttribute(2, "class", "text-danger");
+                builder.AddContent(3, "Ingrese un número de operación");
+                builder.CloseElement();
+            }
+        };
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        private string ValidationClass()
+        {
+            if (!IsOperationValid != null)
+            {
+                if (!NumOp.Equals(""))
+                {
+                    if (IsOperationValid.Value)
+                    {
+                        return "form-control is-valid";
+                    }
+                    else
+                    {
+                        return "form-control is-invalid";
+                    }
+                }
+                else
+                {
+                    return "form-control is-invalid";
+                }
+            }
+            else
+            {
+                return "form-control";
+            }
+
+        }
 
     }
 }

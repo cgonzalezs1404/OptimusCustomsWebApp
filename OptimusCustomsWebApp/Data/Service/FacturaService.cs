@@ -9,6 +9,7 @@ using OptimusCustomsWebApp.Model;
 using Newtonsoft.Json;
 using System.Net;
 using System.Net.Http.Headers;
+using System.IO;
 
 namespace OptimusCustomsWebApp.Data.Service
 {

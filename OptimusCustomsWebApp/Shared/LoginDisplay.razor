@@ -1,18 +1,4 @@
-﻿@*<AuthorizeView>
-        <Authorized>
-            <a href="Identity/Account/Manage">Hello, @context.User.Identity.Name!</a>
-            <form method="post" action="Identity/Account/LogOut">
-                <button type="submit" class="nav-link btn btn-link">Log out</button>
-            </form>
-        </Authorized>
-        <NotAuthorized>
-            <a href="Account/Register">Register</a>
-            <a href="Account/Login">Log in</a>
-        </NotAuthorized>
-    </AuthorizeView>*@
-
-
-@if (Usuario.Username != null)
+﻿@if (Usuario.Username != null)
 {
     <div class="topnav">
         <a class="active" href="/home">Optimus Customs</a>
@@ -20,7 +6,7 @@
         <a href="/operacion">Operaciones</a>
         <a href="/usuario">Usuarios</a>
         <div class="topnav-right">
-            <a href="">@Usuario.Username!</a>
+            <a href="">@Usuario.Username</a>
             <a href="" @onclick="LogOut">Salir</a>
 
         </div>

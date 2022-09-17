@@ -4,6 +4,7 @@ namespace OptimusCustomsWebApp.Model
 {
     public class FacturaModel
     {
+        public int IdOperacion { get; set; }
         public int IdFactura { get; set; }
         public int IdTipoFactura { get; set; }
         public string TipoFactura { get; set; }

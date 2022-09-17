@@ -51,9 +51,9 @@
                         <div class="col-md-2">
                             <br>
                             @if (IdOperacion != null && !IdOperacion.Equals(""))
-                            {<input type="button" class="btn btn-success" @onclick="@(async () => await OnUpdate())" value="Actualizar"> }
+                            { <input type="button" class="btn btn-success" @onclick="@(async () => await OnUpdate())" value="Actualizar"> }
                             else
-                            { <input type="button" class="btn btn-success" @onclick="@(async () => await OnCreate())" value="Gaurdar">}
+                            { <input type="button" class="btn btn-success" @onclick="@(async () => await OnCreate())" value="Gaurdar"> }
                             <input type="button" class="btn btn-danger" @onclick="@(async () => await OnCancel())" value="Cancelar">
                         </div>
                     </form>
