@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Hosting;
+using Newtonsoft.Json;
 using OptimusCustomsWebApp.Data;
 using OptimusCustomsWebApp.Data.Service;
 using OptimusCustomsWebApp.Model;
@@ -8,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
@@ -43,15 +45,18 @@ namespace OptimusCustomsWebApp.Views
 
         protected async override Task OnInitializedAsync()
         {
+            Service.IsBusy = true;
             await Task.Factory.StartNew(() =>
             {
                 Model = new FacturaModel();
                 NumOp = "";
             });
+            Service.IsBusy = false;
         }
 
         protected async override Task OnParametersSetAsync()
         {
+            Service.IsBusy = true;
             if (IdFactura != null && !IdFactura.Equals(""))
             {
                 Model = await Service.GetFactura(int.Parse(IdFactura));
@@ -60,16 +65,33 @@ namespace OptimusCustomsWebApp.Views
                     OpModel = await OperacionService.GetOperacion(Model.IdOperacion);
                 }
             }
-
+            Service.IsBusy = false;
         }
 
         protected async Task OnCreate()
         {
-            var response = await Service.CreateFactura(Model);
-            if (response.IsSuccessStatusCode)
+            Service.IsBusy = true;
+            var responseF = await Service.CreateFactura(Model);
+
+            if (responseF.StatusCode == HttpStatusCode.OK)
             {
-                Navigation.NavigateTo("/factura");
+                if (responseF.Content is object && responseF.Content.Headers.ContentType.MediaType == "application/json")
+                {
+                    var contentStream = await responseF.Content.ReadAsStreamAsync();
+                    using var streamReader = new StreamReader(contentStream);
+                    using var jsonReader = new JsonTextReader(streamReader);
+                    JsonSerializer serializer = new JsonSerializer();
+                    Model = serializer.Deserialize<FacturaModel>(jsonReader);
+                    OpModel.IdFactura = Model.IdFactura;
+
+                    var responseO = await OperacionService.UpdateOperacion(OpModel);
+                    if(responseO.StatusCode == HttpStatusCode.OK)
+                    {
+                        Navigation.NavigateTo("/factura");
+                    }
+                }
             }
+            Service.IsBusy = false;
         }
 
         protected async Task OnCancel()
@@ -82,21 +104,24 @@ namespace OptimusCustomsWebApp.Views
 
         protected async Task OnUpdate()
         {
+            Service.IsBusy = true;
             var response = await Service.UpdateFactura(Model);
             if (response.IsSuccessStatusCode)
             {
                 Navigation.NavigateTo("/factura");
             }
+            Service.IsBusy = false;
         }
 
         private async Task OnValidateOperacion()
         {
-
+            Service.IsBusy = true;
             if (!NumOp.Equals(""))
             {
                 var response = await OperacionService.ValidateOperacion(NumOp);
                 if (response != null && !response.NumOperacion.Equals(""))
                 {
+                    OpModel = response;
                     IsOperationValid = true;
                 }
                 else
@@ -110,46 +135,46 @@ namespace OptimusCustomsWebApp.Views
             }
             DynamicFragment = RenderComponent();
             ValidationClass();
-
+            Service.IsBusy = false;
         }
 
         private async Task OnInputFileChangeAsync(InputFileChangeEventArgs e)
         {
+
             try
             {
-                var files = e.GetMultipleFiles(10);
-                foreach (var file in files)
+                var file = e.File;
+                Stream stream = file.OpenReadStream();
+                var path = Path.Combine(Environment.WebRootPath, "upload", file.Name);
+                FileStream fs = File.Create(path);
+                await stream.CopyToAsync(fs);
+                stream.Close();
+                fs.Close();
+
+                byte[] bytes = File.ReadAllBytes(path);
+
+                if (file.ContentType.Equals("text/xml"))
                 {
-                    using (var stream = file.OpenReadStream())
-                    {
-                        if (file.ContentType.Equals("text/xml"))
-                        {
-                            Model = await CargaFactura(file);
-                        }
-                    }
-
-                    var path = Path.Combine(Environment.ContentRootPath, "wwwroot", "upload", file.Name);
-                    byte[] fs = File.ReadAllBytes(path);
-                    FileModel fm = new FileModel
-                    {
-                        FileStream = fs,
-                        FileSize = fs.Length
-                    };
-                    Model.FileXml = fm.FileStream;
-                    Model.FilePdf = new byte[0];
-                    FileSelected = true;
-
-
+                    Model = await CargaFactura(file);
+                    Model.FileXml = bytes;
                 }
+                if (file.ContentType.Equals("application/pdf"))
+                {
+                    Model.FilePdf = bytes;
+                }
+
+                FileSelected = true;
             }
             catch (Exception ex)
             {
 
             }
+
         }
 
         private async Task<FacturaModel> CargaFactura(IBrowserFile file)
         {
+            Service.IsBusy = true;
             FacturaModel result = Model;
             try
             {
@@ -202,6 +227,7 @@ namespace OptimusCustomsWebApp.Views
             {
 
             }
+            Service.IsBusy = false;
             return result;
         }
 

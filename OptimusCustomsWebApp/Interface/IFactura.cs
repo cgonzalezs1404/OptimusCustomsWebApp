@@ -10,7 +10,7 @@ namespace OptimusCustomsWebApp.Interface
     /// <summary>
     /// 
     /// </summary>
-    public interface IFactura
+    public interface IFactura : IServiceBase
     {
         /// <summary>
         /// 

@@ -17,6 +17,8 @@ namespace OptimusCustomsWebApp.Data.Service
     {
         private readonly HttpClient httpClient;
 
+        public bool IsBusy { get; set; }
+
         public FacturaService(HttpClient httpClient)
         {
             this.httpClient = httpClient;
@@ -46,6 +48,7 @@ namespace OptimusCustomsWebApp.Data.Service
                 byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
                 result = await httpClient.PostAsync("http://localhost:43248/Factura", byteContent);
+
             }
             catch (Exception ex)
             {

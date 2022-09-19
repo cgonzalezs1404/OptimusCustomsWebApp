@@ -20,6 +20,7 @@ namespace OptimusCustomsWebApp.Data.Service
         {
             this.httpClient = httpClient;
         }
+
         public async Task<HttpResponseMessage> CreateOperacion(OperacionModel model)
         {
             string stringPayload = JsonConvert.SerializeObject(model);
@@ -29,6 +30,22 @@ namespace OptimusCustomsWebApp.Data.Service
 
             string endpoint = "http://localhost:43248/Operacion";
             var response = await httpClient.PostAsync(endpoint, byteContent);
+
+            if (response != null && response.IsSuccessStatusCode)
+                return response;
+            else
+                return null;
+        }
+
+        public async Task<HttpResponseMessage> UpdateOperacion(OperacionModel model)
+        {
+            string payload = JsonConvert.SerializeObject(model);
+            var buffer = System.Text.Encoding.UTF8.GetBytes(payload);
+            var byteContent = new ByteArrayContent(buffer);
+            byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+            string endpoint = "http://localhost:43248/Operacion";
+            var response = await httpClient.PutAsync(endpoint, byteContent);
 
             if (response != null && response.IsSuccessStatusCode)
                 return response;

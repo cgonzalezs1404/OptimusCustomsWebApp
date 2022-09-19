@@ -10,7 +10,7 @@ namespace OptimusCustomsWebApp.Interface
     /// <summary>
     /// 
     /// </summary>
-    public interface IUsuario
+    public interface IUsuario : IServiceBase
     {
         /// <summary>
         /// 

@@ -34,6 +34,8 @@ namespace OptimusCustomsWebApp.Data.Service
             this.httpClient = httpClient;
         }
 
+        public bool IsBusy { get; set; }
+
         /// <summary>
         /// 
         /// </summary>
@@ -122,7 +124,7 @@ namespace OptimusCustomsWebApp.Data.Service
             var response = await httpClient.GetAsync(endpoint, HttpCompletionOption.ResponseHeadersRead);
             response.EnsureSuccessStatusCode();
 
-            if(response.StatusCode == HttpStatusCode.OK)
+            if (response.StatusCode == HttpStatusCode.OK)
             {
                 if (response.Content is object && response.Content.Headers.ContentType.MediaType == "application/json")
                 {

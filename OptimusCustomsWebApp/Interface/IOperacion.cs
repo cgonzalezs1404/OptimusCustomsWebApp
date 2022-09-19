@@ -23,6 +23,13 @@ namespace OptimusCustomsWebApp.Interface
         /// <param name="model"></param>
         /// <returns></returns>
         Task<HttpResponseMessage> CreateOperacion(OperacionModel model);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        Task<HttpResponseMessage> UpdateOperacion(OperacionModel model);
         
         /// <summary>
         /// 

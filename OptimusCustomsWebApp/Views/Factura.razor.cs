@@ -8,6 +8,7 @@ using System.Net;
 using System.Net.Mail;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace OptimusCustomsWebApp.Views
@@ -24,9 +25,13 @@ namespace OptimusCustomsWebApp.Views
 
         protected override async Task OnInitializedAsync()
         {
+            Service.IsBusy = true;
             FromDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
             ToDate = DateTime.Today;
-            List = await Service.GetFacturas(FromDate, ToDate);
+            await OnSearch();
+
+            Thread.Sleep(2000);
+            Service.IsBusy = false;
         }
 
         private async Task OnSearch()

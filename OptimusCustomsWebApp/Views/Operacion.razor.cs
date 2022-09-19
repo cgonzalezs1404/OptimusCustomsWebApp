@@ -54,7 +54,7 @@ namespace OptimusCustomsWebApp.Views
         {
             DeleteDialogOpen = true;
             StateHasChanged();
-            Id = model.IdFactura;
+            Id = model.IdFactura.Value;
         }
 
         private string SetRowStyle(string tipoFactura)
