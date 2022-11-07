@@ -99,36 +99,45 @@ else
                             </tr>
                         </thead>
 
-                        <tbody>
-                            @foreach (var factura in List)
-                            {
-                                <tr style="@SetRowStyle(factura.EstadoFactura)">
+        <tbody>
+            @foreach (var factura in List)
+            {
+                <tr>
+                    <td class="row-10">@factura.IdFactura</td>
+                    <td class="row-10">@factura.IdTipoFactura</td>
+                    <td class="row-10">@factura.IdEstadoFactura</td>
+                    <td class="row-30">@factura.RazonSocial</td>
+                    <td class="row-20">@factura.FechaEmision.ToString("MM/dd/yyyy")</td>
+                    <td class="row-20">@factura.RFC</td>
+                    <td class="row-10">@factura.Serie</td>
+                    <td class="row-10">@factura.Folio</td>
+                    <td class="row-20">@factura.Total.ToString("C2")</td>
+                    @*<td class="row-20">@factura.Descripcion</td>*@
+                    <td class="row-10">
+                        <input type="checkbox" checked="@factura.EsAprobado" readonly>
 
-                                    <td>@factura.IdFactura</td>
-                                    <td>@factura.TipoFactura</td>
-                                    <td>@factura.EstadoFactura</td>
-                                    <td>@factura.RazonSocial</td>
-                                    <td>@factura.FechaEmision.ToString("MM/dd/yyyy")</td>
-                                    <td>@factura.RFC</td>
-                                    <td>@factura.Serie</td>
-                                    <td>@factura.Folio</td>
-                                    <td>@factura.Total.ToString("C2")</td>
-                                    @*<td class="row-20">@factura.Descripcion</td>*@
-                                    <td>
-                                        <input type="checkbox" checked="@factura.EsAprobado" readonly>
-                                    </td>
-                                    <td>
-                                        <div class="btn-group-sm">
-                                            <button class="btn btn-success btn-sm" title="Ver"><span class="oi oi-eye" aria-hidden="true" @onclick="() => GetPdfFile(factura.IdFactura)"/></button>
-                                            <a class="btn btn-primary btn-sm" title="Editar" href="/factura/@factura.IdFactura"><span class="oi oi-pencil" aria-hidden="true" /></a>
-                                            <button class="btn btn-danger btn-sm" title="Borrar" @onclick="() => OpenDeleteDialog(factura)"><span class="oi oi-trash" aria-hidden="true" /></button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
+                    </td>
+                    <td class="row-20">
+                        <div class="btn-group-sm">
+                            <button class="btn btn-success btn-sm" title="Ver"><span class="oi oi-eye" aria-hidden="true" /></button>
+                            <a class="btn btn-info btn-sm" title="Editar" href="/factura/@factura.IdFactura"><span class="oi oi-pencil" aria-hidden="true" /></a>
+                            <button class="btn btn-danger btn-sm" title="Borrar" @onclick="() => OpenDeleteDialog(factura)"><span class="oi oi-trash" aria-hidden="true" /></button>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+
+        <tfoot>
+            <tr>
+                <td style="text-align:left">
+                    <div class="btn-group" role="group">
+                        <a class="btn btn-success" href="/factura/create"><span class="oi oi-plus" /> Cargar Factura</a>
+                    </div>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
 
 
 
