@@ -36,5 +36,11 @@ namespace OptimusCustomsWebApp.Data.Service
             return list;
         }
 
+        public async Task<List<CatalogoModel>> GetTipoDocumento()
+        {
+            var list = await httpClient.GetFromJsonAsync<List<CatalogoModel>>("http://localhost:43248/Catalogos/6");
+            return list;
+        }
+
     }
 }

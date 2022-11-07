@@ -94,24 +94,24 @@
                     <tbody>
                         @foreach (var element in List)
                         {
-                        <tr>
-                            <td>@element.NumOperacion</td>
-                            <td>@element.TipoOperacion</td>
-                            <td>@element.RazonSocial</td>
-                            <td>@element.FolioFactura</td>
-                            <td>@element.IdComprobantePago</td>
-                            <td>@element.IdComplementoPago</td>
-                            <td>@element.IdPruebaEntrega</td>
-                            <td>@element.FechaInicio</td>
-                            <td>@element.FechaFin</td>
-                            <td>
-                                <div class="btn-group-sm">
-                                    <button class="btn btn-success btn-sm" title="Ver"><span class="oi oi-eye" aria-hidden="true" /></button>
-                                    <a class="btn btn-info btn-sm" title="Editar" href="/operacion/@element.IdOperacion"><span class="oi oi-pencil" aria-hidden="true" /></a>
-                                    <button class="btn btn-danger btn-sm" title="Borrar" @onclick="() => OpenDeleteDialog(element)"><span class="oi oi-trash" aria-hidden="true" /></button>
-                                </div>
-                            </td>
-                        </tr>
+                            <tr>
+                                <td>@element.NumOperacion</td>
+                                <td>@element.TipoOperacion</td>
+                                <td>@element.RazonSocial</td>
+                                <td>@element.IdFactura</td>
+                                <td>@RenderComponent(this, element.ExisteComprobantePago, element, Model.Enum.TipoDocumento.ComprobantePago)</td>
+                                <td>@RenderComponent(this, element.ExisteComplementoPago, element, Model.Enum.TipoDocumento.ComplementoPago)</td>
+                                <td>@RenderComponent(this, element.ExistePruebaEntrega, element, Model.Enum.TipoDocumento.PruebaEntrega)</td>
+                                <td>@element.FechaInicio</td>
+                                <td>@element.FechaFin</td>
+                                <td>
+                                    <div class="btn-group-sm">
+                                        <button class="btn btn-success btn-sm" title="Ver"><span class="oi oi-eye" aria-hidden="true" /></button>
+                                        <a class="btn btn-primary btn-sm" title="Editar" href="/operacion/@element.IdOperacion"><span class="oi oi-pencil" aria-hidden="true" /></a>
+                                        <button class="btn btn-danger btn-sm" title="Borrar" @onclick="() => OpenDeleteDialog(element)"><span class="oi oi-trash" aria-hidden="true" /></button>
+                                    </div>
+                                </td>
+                            </tr>
                         }
                     </tbody>
                 </table>
@@ -119,16 +119,25 @@
 
             @if (DeleteDialogOpen)
             {
-                <ModalDialog Title="Are you sure?"
-                             Text="Do you want to delete this entry?"
+                <ModalDialog Title="Borrar Operación"
+                             Text="¿Estas seguro de realizar esta acción?"
                              OnClose="@OnDeleteDialogClose">
                 </ModalDialog>
+            }
+
+            @if (UpFileDialogOpen)
+            {
+                <ModalDialogUplDoc Title="Cargar documento"
+                                   Text=""
+                                   OnClose="@OnUpFileClose"
+                                   OnUpFile="@OnObtainFile">
+                </ModalDialogUplDoc>
             }
         }
     </div>
     <footer class="main-footer">
         <div class="btn-group" role="group">
-            <a class="btn btn-success" href="/operacion/create"><span class="oi oi-plus" /> Cargar Factura</a>
+            <a class="btn btn-success" href="/operacion/create"><span class="oi oi-plus" /> Cargar Operación</a>
         </div>
     </footer>
 </main>

@@ -15,7 +15,7 @@ namespace OptimusCustomsWebApp.Interface
         /// <param name="fromDate"></param>
         /// <param name="toDate"></param>
         /// <returns></returns>
-        Task<List<OperacionModel>> GetOperaciones(DateTime fromDate, DateTime toDate);
+        Task<List<OperacionModel>> GetOperaciones(string fromDate, string toDate);
 
         /// <summary>
         /// 
@@ -37,5 +37,19 @@ namespace OptimusCustomsWebApp.Interface
         /// <param name="idFactura"></param>
         /// <returns></returns>
         Task<HttpResponseMessage> DeleteOperacion(int id);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        Task<HttpResponseMessage> CreateDocumento(DocumentoModel model);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        Task<HttpResponseMessage> UpdateDocumento(DocumentoModel model);
     }
 }

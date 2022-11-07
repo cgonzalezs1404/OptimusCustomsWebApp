@@ -7,7 +7,16 @@
                 <button type="button" class="close" @onclick="@ModalCancel">X</button>
             </div>
             <div class="modal-body">
-
+                <form class="form-control-file">
+                    <div class="row">
+                        <div class="col">
+                            <label for="file">Elige el archivo para cargar</label>
+                        </div>
+                        <div class="col">
+                            <InputFile type="file" id="file" name="file" OnChange="@OnInputFileChangeAsync" />
+                        </div>
+                    </div>
+                </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" @onclick=@ModalOk>Aceptar</button>

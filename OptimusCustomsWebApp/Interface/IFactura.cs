@@ -1,6 +1,7 @@
 ﻿using OptimusCustomsWebApp.Model;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -43,5 +44,11 @@ namespace OptimusCustomsWebApp.Interface
         /// <param name="model"></param>
         /// <returns></returns>
         Task<HttpResponseMessage> DeleteFactura(int idFactura);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="idFactura"></param>
+        /// <returns></returns>
+        Task<Stream> GetFacturaPdf(int idFactura);
     }
 }

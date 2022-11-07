@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using OptimusCustomsWebApp.Data.Service;
 using OptimusCustomsWebApp.Model;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Mail;
@@ -17,6 +19,9 @@ namespace OptimusCustomsWebApp.Views
     {
         [Inject]
         protected FacturaService Service { get; set; }
+        [Inject]
+        protected IJSRuntime JSRuntime { get; set; }
+
         public List<FacturaModel> List;
         public bool DeleteDialogOpen { get; set; }
         public int IdFactura { get; set; }
@@ -71,6 +76,11 @@ namespace OptimusCustomsWebApp.Views
             if (tipoFactura.Equals("Por vencer")) { return "background-color: #F1EB9C; color: black;"; }
             else if (tipoFactura.Equals("Vencido")) { return "background-color: #FF7276; color: black;"; }
             else { return ""; }
+        }
+
+        private async Task GetPdfFile(int idFactura)
+        {
+            await JSRuntime.InvokeAsync<object>("open", "http://localhost:43248/Factura/pdf?idFactura=" + idFactura, "_blank");
         }
     }
 }

@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.JSInterop;
 using OptimusCustomsWebApp.Data.Service;
 using OptimusCustomsWebApp.Model;
+using OptimusCustomsWebApp.Model.Enum;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +17,8 @@ namespace OptimusCustomsWebApp.Views
         public NavigationManager Navigation { get; set; }
         [Inject]
         private IWebHostEnvironment Environment { get; set; }
+        [Inject]
+        protected IJSRuntime JSRuntime { get; set; }
         public OperacionModel Model { get; set; }
         [Inject]
         public OperacionService Service { get; set; }
@@ -42,6 +46,8 @@ namespace OptimusCustomsWebApp.Views
             if (IdOperacion != null && !IdOperacion.Equals(""))
             {
                 Model = await Service.GetOperacion(int.Parse(IdOperacion));
+                IdUsuario = Model.IdUsuario.ToString();
+                IdTipoOperacion = Model.IdTipoOperacion.ToString();
             }
 
         }
@@ -59,15 +65,18 @@ namespace OptimusCustomsWebApp.Views
 
         protected async Task OnCancel()
         {
-            await Task.Factory.StartNew(() =>
-            {
-                Navigation.NavigateTo("/operacion");
-            });
+            await JSRuntime.InvokeAsync<object>("history.go", -1);
         }
 
         protected async Task OnUpdate()
         {
-            
+            Model.IdUsuario = int.Parse(IdUsuario);
+            Model.IdTipoOperacion = int.Parse(IdTipoOperacion);
+            var response = await Service.UpdateOperacion(Model);
+            if (response.IsSuccessStatusCode)
+            {
+                Navigation.NavigateTo("/operacion");
+            }
         }
     }
 }

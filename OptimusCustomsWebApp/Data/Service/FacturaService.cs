@@ -66,5 +66,38 @@ namespace OptimusCustomsWebApp.Data.Service
         {
             throw new NotImplementedException();
         }
+
+        public async Task<Stream> GetFacturaPdf(int idFactura)
+        {
+            string endpoint = "http://localhost:43248/Factura/pdf?idFactura=" + idFactura;
+            var response = await httpClient.GetAsync(endpoint, HttpCompletionOption.ResponseHeadersRead);
+
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                if (response.Content is object)
+                {
+                    var contentStream = await response.Content.ReadAsStreamAsync();
+
+                    using var streamReader = new StreamReader(contentStream);
+                    using var jsonReader = new JsonTextReader(streamReader);
+
+                    JsonSerializer serializer = new JsonSerializer();
+
+                    try
+                    {
+                        return serializer.Deserialize<Stream>(jsonReader);
+                    }
+                    catch (JsonReaderException)
+                    {
+                        Console.WriteLine("Invalid JSON.");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("HTTP Response was invalid and cannot be deserialised.");
+                }
+            }
+            return null;
+        }
     }
 }

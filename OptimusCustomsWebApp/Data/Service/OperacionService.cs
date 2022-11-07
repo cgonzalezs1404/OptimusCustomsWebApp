@@ -58,9 +58,9 @@ namespace OptimusCustomsWebApp.Data.Service
             throw new NotImplementedException();
         }
 
-        public async Task<List<OperacionModel>> GetOperaciones(DateTime fromDate, DateTime toDate)
+        public async Task<List<OperacionModel>> GetOperaciones(string fromDate, string toDate)
         {
-            string endpoint = "http://localhost:43248/Operacion?" + "fromDate=" + fromDate.ToString("yyyy-MM-dd") + "&" + "toDate=" + toDate.ToString("yyyy-MM-dd");
+            string endpoint = "http://localhost:43248/Operacion?" + "fromDate=" + fromDate + "&" + "toDate=" + toDate;
             var response = await httpClient.GetAsync(endpoint, HttpCompletionOption.ResponseHeadersRead);
 
             if (response.StatusCode == HttpStatusCode.OK)
@@ -155,6 +155,38 @@ namespace OptimusCustomsWebApp.Data.Service
                 }
             }
             return null;
+        }
+
+        public async Task<HttpResponseMessage> CreateDocumento(DocumentoModel model)
+        {
+            string stringPayload = JsonConvert.SerializeObject(model);
+            var buffer = System.Text.Encoding.UTF8.GetBytes(stringPayload);
+            var byteContent = new ByteArrayContent(buffer);
+            byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+            string endpoint = "http://localhost:43248/Operacion/document";
+            var response = await httpClient.PostAsync(endpoint, byteContent);
+
+            if (response != null && response.IsSuccessStatusCode)
+                return response;
+            else
+                return null;
+        }
+
+        public async Task<HttpResponseMessage> UpdateDocumento(DocumentoModel model)
+        {
+            string payload = JsonConvert.SerializeObject(model);
+            var buffer = System.Text.Encoding.UTF8.GetBytes(payload);
+            var byteContent = new ByteArrayContent(buffer);
+            byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+            string endpoint = "http://localhost:43248/Operacion/document";
+            var response = await httpClient.PutAsync(endpoint, byteContent);
+
+            if (response != null && response.IsSuccessStatusCode)
+                return response;
+            else
+                return null;
         }
     }
 }
