@@ -8,9 +8,9 @@ namespace OptimusCustomsWebApp.Model
 {
     public class SessionData
     {
-        [Required]
+        [Required(ErrorMessage = "Campo Usuario Requerido")]
         public string Username { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Campo Contraseña Requerido")]
         public string Password { get; set; }
     }
 }

@@ -39,8 +39,7 @@ namespace OptimusCustomsWebApp.Shared
             {
                 Accessor.HttpContext.Session.Clear();
 
-                await JSRuntime.InvokeAsync<string>(
-                "clientJsMethods.RedirectTo", "/login");
+                await JSRuntime.InvokeAsync<string>("clientJsMethods.RedirectTo", "/login");
             }
         }
     }

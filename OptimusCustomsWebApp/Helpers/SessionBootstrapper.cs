@@ -13,6 +13,8 @@ namespace OptimusCustomsWebApp.Helpers
     {
         private readonly IHttpContextAccessor accessor;
         private readonly SessionState session;
+        public string Username;
+        public string Password;
         public SessionBootstrapper(IHttpContextAccessor _accessor, SessionState _session)
         {
             accessor = _accessor;
@@ -25,8 +27,8 @@ namespace OptimusCustomsWebApp.Helpers
             //Code to save data in server side session
 
             //If session already has data
-            string Username = accessor.HttpContext.Session.GetString("Username");
-            string Password = accessor.HttpContext.Session.GetString("Password");
+            Username = accessor.HttpContext.Session.GetString("Username");
+            Password = accessor.HttpContext.Session.GetString("Password");
 
             //If server session is null
             if (session.Items.ContainsKey("Username") && Username == null)

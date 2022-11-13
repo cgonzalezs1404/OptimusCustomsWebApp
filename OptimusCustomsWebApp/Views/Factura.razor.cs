@@ -1,15 +1,10 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Http;
 using Microsoft.JSInterop;
 using OptimusCustomsWebApp.Data.Service;
 using OptimusCustomsWebApp.Model;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Net.Mail;
-using System.Net.Security;
-using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -21,22 +16,42 @@ namespace OptimusCustomsWebApp.Views
         protected FacturaService Service { get; set; }
         [Inject]
         protected IJSRuntime JSRuntime { get; set; }
+        [Inject]
+        protected IHttpContextAccessor Accessor { get; set; }
 
         public List<FacturaModel> List;
         public bool DeleteDialogOpen { get; set; }
         public int IdFactura { get; set; }
         public DateTime FromDate { get; set; }
         public DateTime ToDate { get; set; }
+        public SessionData Usuario { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
-            Service.IsBusy = true;
-            FromDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
-            ToDate = DateTime.Today;
-            await OnSearch();
+            Usuario = await GetSession();
+            if (Usuario != null && (Usuario.Username == null && Usuario.Password == null))
+            {
+                await JSRuntime.InvokeAsync<string>("clientJsMethods.RedirectTo", "/login");
+            }
+            else
+            {
+                Service.IsBusy = true;
+                FromDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+                ToDate = DateTime.Today;
+                await OnSearch();
+                Thread.Sleep(1000);
+                Service.IsBusy = false;
+            }
 
-            Thread.Sleep(2000);
-            Service.IsBusy = false;
+        }
+
+        private async Task<SessionData> GetSession()
+        {
+            var result = new SessionData();
+            result.Username = Accessor.HttpContext.Session.GetString("Username");
+            result.Password = Accessor.HttpContext.Session.GetString("Password");
+            await InvokeAsync(() => StateHasChanged());
+            return result;
         }
 
         private async Task OnSearch()
