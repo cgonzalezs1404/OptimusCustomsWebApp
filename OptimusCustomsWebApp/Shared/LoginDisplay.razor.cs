@@ -35,12 +35,11 @@ namespace OptimusCustomsWebApp.Shared
 
         private async Task LogOut()
         {
-            if (Accessor.HttpContext.Session.Keys.Contains("Username") && Accessor.HttpContext.Session.Keys.Contains("Password"))
-            {
-                Accessor.HttpContext.Session.Clear();
+            Accessor.HttpContext.Session.Clear();
+            await JSRuntime.InvokeAsync<string>("clientJsMethods.RedirectTo", "/login");
 
-                await JSRuntime.InvokeAsync<string>("clientJsMethods.RedirectTo", "/login");
-            }
+            await JSRuntime.InvokeVoidAsync("clientCookiesMethods.DeleteCookie", "Username");
+            await JSRuntime.InvokeVoidAsync("clientCookiesMethods.DeleteCookie", "Password");
         }
     }
 }

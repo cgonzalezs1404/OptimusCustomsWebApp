@@ -28,28 +28,29 @@ namespace OptimusCustomsWebApp.Views
 
         protected override async Task OnInitializedAsync()
         {
+            Service.IsBusy = true;
+            FromDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+            ToDate = DateTime.Today;
+            await OnSearch();
+            Thread.Sleep(1000);
+            Service.IsBusy = false;
+
+        }
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
             Usuario = await GetSession();
             if (Usuario != null && (Usuario.Username == null && Usuario.Password == null))
             {
                 await JSRuntime.InvokeAsync<string>("clientJsMethods.RedirectTo", "/login");
             }
-            else
-            {
-                Service.IsBusy = true;
-                FromDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
-                ToDate = DateTime.Today;
-                await OnSearch();
-                Thread.Sleep(1000);
-                Service.IsBusy = false;
-            }
-
         }
 
         private async Task<SessionData> GetSession()
         {
             var result = new SessionData();
-            result.Username = Accessor.HttpContext.Session.GetString("Username");
-            result.Password = Accessor.HttpContext.Session.GetString("Password");
+            result.Username = Accessor.HttpContext == null ? null : Accessor.HttpContext.Session.GetString("Username");
+            result.Password = Accessor.HttpContext == null ? null : Accessor.HttpContext.Session.GetString("Password");
             await InvokeAsync(() => StateHasChanged());
             return result;
         }

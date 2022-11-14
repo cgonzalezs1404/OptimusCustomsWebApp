@@ -16,6 +16,7 @@ namespace OptimusCustomsWebApp.Data.Service
     public class OperacionService : IOperacion
     {
         private readonly HttpClient httpClient;
+        public bool IsBusy { get; set; }
         public OperacionService(HttpClient httpClient)
         {
             this.httpClient = httpClient;

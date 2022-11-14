@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.JSInterop;
 using OptimusCustomsWebApp.Data.Service;
@@ -10,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 
@@ -21,6 +23,8 @@ namespace OptimusCustomsWebApp.Views
         protected OperacionService Service { get; set; }
         [Inject]
         protected IJSRuntime JSRuntime { get; set; }
+        [Inject]
+        protected IHttpContextAccessor Accessor { get; set; }
         [Inject]
         private IWebHostEnvironment Environment { get; set; }
         [Inject]
@@ -39,9 +43,12 @@ namespace OptimusCustomsWebApp.Views
         public DocumentoModel DocumentoUpload { get; set; }
 
         private Dictionary<string, string> Query { get; set; }
+        public SessionData Usuario { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
+
+            Service.IsBusy = true;
             var uri = NavManager.ToAbsoluteUri(NavManager.Uri);
             if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("fromDate", out var fromDate) && QueryHelpers.ParseQuery(uri.Query).TryGetValue("toDate", out var toDate))
             {
@@ -54,6 +61,27 @@ namespace OptimusCustomsWebApp.Views
                 ToDate = DateTime.Today;
             }
             List = await Service.GetOperaciones(FromDate.ToString("yyyy-MM-dd"), ToDate.ToString("yyyy-MM-dd"));
+            Thread.Sleep(1000);
+            Service.IsBusy = false;
+
+        }
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            Usuario = await GetSession();
+            if (Usuario != null && (Usuario.Username == null && Usuario.Password == null))
+            {
+                await JSRuntime.InvokeAsync<string>("clientJsMethods.RedirectTo", "/login");
+            }
+        }
+
+        private async Task<SessionData> GetSession()
+        {
+            var result = new SessionData();
+            result.Username = Accessor.HttpContext == null ? null : Accessor.HttpContext.Session.GetString("Username");
+            result.Password = Accessor.HttpContext == null ? null : Accessor.HttpContext.Session.GetString("Password");
+            await InvokeAsync(() => StateHasChanged());
+            return result;
         }
 
         private async Task OnSearch()

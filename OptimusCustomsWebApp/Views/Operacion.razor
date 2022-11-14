@@ -1,144 +1,156 @@
 ﻿@page "/operacion"
 @using OptimusCustomsWebApp.Pages
 
-<form class="form-control">
-    <div class="row">
-        <div class="col">
-            <label class="search-label">Desde:</label>
-        </div>
-        <div class="col">
-            <input type="date" class="form-control" @bind="FromDate" />
-        </div>
-        <div class="col">
-            <label class="search-label">Tipo:</label>
-        </div>
-        <div class="col">
-            <select class="form-control">
-                <option>Todos</option>
-                <option>Cliente</option>
-                <option>Proveedor</option>
-            </select>
-        </div>
-        <div class="col">
-            <label class="search-label">Razòn Social:</label>
-        </div>
-        <div class="col">
-            <select class="form-control">
-                <option>Todos</option>
-                <option>OPTIMUS CUSTOMS SA DE CV</option>
-                <option>RECICLADOS Y METALES PELUCHE S DE RL DE CV</option>
-                <option>JOSE RODRIGUEZ CANTERO</option>
-            </select>
+@if (Service.IsBusy)
+{
+    <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary" style="width:100px; height:100px;" role="status">
+            <span class="sr-only"></span>
         </div>
     </div>
-    <div class="row">
-        <div class="col">
-            <label class="search-label">Hasta:</label>
-        </div>
-        <div class="col">
-            <input type="date" class="form-control" @bind="ToDate" />
-        </div>
-        <div class="col">
-            <label class="search-label">Estado:</label>
-        </div>
-        <div class="col">
-            <select class="form-control">
-                <option>Todos</option>
-                <option>Normal</option>
-                <option>Por vencer</option>
-                <option>Vencido</option>
-            </select>
-        </div>
-        <div class="col">
-            <label class="search-label">Factura aprobada:</label>
-        </div>
-        <div class="col">
-            <select class="form-control">
-                <option>Todos</option>
-                <option>Si</option>
-                <option>No</option>
-            </select>
-        </div>
-    </div>
-    <button type="button" class="btn btn-primary" @onclick="@(async () => await OnSearch())"><span class="oi oi-browser" />Buscar</button>
-    <button type="button" class="btn btn-warning"><span class="oi oi-reload" />Limpiar</button>
-</form>
-
-<main class="main-container">
-    <header class="main-header">
-    </header>
-    <div class="main-content">
-        @if (List == null)
-        {
-            <p><em>Loading...</em></p>
-        }
-        else
-        {
-            <div class="row">
-                <table class="table-main table-responsive">
-                    <thead>
-                        <tr>
-                            <th>No. Operación</th>
-                            <th>Tipo Operación</th>
-                            <th>Usuario</th>
-                            <th>Factura</th>
-                            <th>Comprobante Pago</th>
-                            <th>Complemento Pago</th>
-                            <th>Prueba Entrega</th>
-                            <th>Fecha Inicio</th>
-                            <th>Fecha Fin</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        @foreach (var element in List)
-                        {
-                            <tr>
-                                <td>@element.NumOperacion</td>
-                                <td>@element.TipoOperacion</td>
-                                <td>@element.RazonSocial</td>
-                                <td>@element.IdFactura</td>
-                                <td>@RenderComponent(this, element.ExisteComprobantePago, element, Model.Enum.TipoDocumento.ComprobantePago)</td>
-                                <td>@RenderComponent(this, element.ExisteComplementoPago, element, Model.Enum.TipoDocumento.ComplementoPago)</td>
-                                <td>@RenderComponent(this, element.ExistePruebaEntrega, element, Model.Enum.TipoDocumento.PruebaEntrega)</td>
-                                <td>@element.FechaInicio</td>
-                                <td>@element.FechaFin</td>
-                                <td>
-                                    <div class="btn-group-sm">
-                                        <button class="btn btn-success btn-sm" title="Ver"><span class="oi oi-eye" aria-hidden="true" /></button>
-                                        <a class="btn btn-primary btn-sm" title="Editar" href="/operacion/@element.IdOperacion"><span class="oi oi-pencil" aria-hidden="true" /></a>
-                                        <button class="btn btn-danger btn-sm" title="Borrar" @onclick="() => OpenDeleteDialog(element)"><span class="oi oi-trash" aria-hidden="true" /></button>
-                                    </div>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
+}
+else
+{
+    <form class="form-control">
+        <div class="row">
+            <div class="col">
+                <label class="search-label">Desde:</label>
             </div>
-
-            @if (DeleteDialogOpen)
-            {
-                <ModalDialog Title="Borrar Operación"
-                             Text="¿Estas seguro de realizar esta acción?"
-                             OnClose="@OnDeleteDialogClose">
-                </ModalDialog>
-            }
-
-            @if (UpFileDialogOpen)
-            {
-                <ModalDialogUplDoc Title="Cargar documento"
-                                   Text=""
-                                   OnClose="@OnUpFileClose"
-                                   OnUpFile="@OnObtainFile">
-                </ModalDialogUplDoc>
-            }
-        }
-    </div>
-    <footer class="main-footer">
-        <div class="btn-group" role="group">
-            <a class="btn btn-success" href="/operacion/create"><span class="oi oi-plus" /> Cargar Operación</a>
+            <div class="col">
+                <input type="date" class="form-control" @bind="FromDate" />
+            </div>
+            <div class="col">
+                <label class="search-label">Tipo:</label>
+            </div>
+            <div class="col">
+                <select class="form-control">
+                    <option>Todos</option>
+                    <option>Cliente</option>
+                    <option>Proveedor</option>
+                </select>
+            </div>
+            <div class="col">
+                <label class="search-label">Razòn Social:</label>
+            </div>
+            <div class="col">
+                <select class="form-control">
+                    <option>Todos</option>
+                    <option>OPTIMUS CUSTOMS SA DE CV</option>
+                    <option>RECICLADOS Y METALES PELUCHE S DE RL DE CV</option>
+                    <option>JOSE RODRIGUEZ CANTERO</option>
+                </select>
+            </div>
         </div>
-    </footer>
-</main>
+        <div class="row">
+            <div class="col">
+                <label class="search-label">Hasta:</label>
+            </div>
+            <div class="col">
+                <input type="date" class="form-control" @bind="ToDate" />
+            </div>
+            <div class="col">
+                <label class="search-label">Estado:</label>
+            </div>
+            <div class="col">
+                <select class="form-control">
+                    <option>Todos</option>
+                    <option>Normal</option>
+                    <option>Por vencer</option>
+                    <option>Vencido</option>
+                </select>
+            </div>
+            <div class="col">
+                <label class="search-label">Factura aprobada:</label>
+            </div>
+            <div class="col">
+                <select class="form-control">
+                    <option>Todos</option>
+                    <option>Si</option>
+                    <option>No</option>
+                </select>
+            </div>
+        </div>
+        <button type="button" class="btn btn-primary" @onclick="@(async () => await OnSearch())"><span class="oi oi-browser" />Buscar</button>
+        <button type="button" class="btn btn-warning"><span class="oi oi-reload" />Limpiar</button>
+    </form>
+
+    <main class="main-container">
+        <header class="main-header">
+        </header>
+        <div class="main-content">
+            @if (List == null)
+            {
+                <p><em>Loading...</em></p>
+            }
+            else
+            {
+                <div class="row">
+                    <table class="table-main table-responsive">
+                        <thead>
+                            <tr>
+                                <th>No. Operación</th>
+                                <th>Tipo Operación</th>
+                                <th>Usuario</th>
+                                <th>Factura</th>
+                                <th>Comprobante Pago</th>
+                                <th>Complemento Pago</th>
+                                <th>Prueba Entrega</th>
+                                <th>Fecha Inicio</th>
+                                <th>Fecha Fin</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @foreach (var element in List)
+                            {
+                                <tr>
+                                    <td>@element.NumOperacion</td>
+                                    <td>@element.TipoOperacion</td>
+                                    <td>@element.RazonSocial</td>
+                                    <td>@element.IdFactura</td>
+                                    <td>@RenderComponent(this, element.ExisteComprobantePago, element, Model.Enum.TipoDocumento.ComprobantePago)</td>
+                                    <td>@RenderComponent(this, element.ExisteComplementoPago, element, Model.Enum.TipoDocumento.ComplementoPago)</td>
+                                    <td>@RenderComponent(this, element.ExistePruebaEntrega, element, Model.Enum.TipoDocumento.PruebaEntrega)</td>
+                                    <td>@element.FechaInicio</td>
+                                    <td>@element.FechaFin</td>
+                                    <td>
+                                        <div class="btn-group-sm">
+                                            <button class="btn btn-success btn-sm" title="Ver"><span class="oi oi-eye" aria-hidden="true" /></button>
+                                            <a class="btn btn-primary btn-sm" title="Editar" href="/operacion/@element.IdOperacion"><span class="oi oi-pencil" aria-hidden="true" /></a>
+                                            <button class="btn btn-danger btn-sm" title="Borrar" @onclick="() => OpenDeleteDialog(element)"><span class="oi oi-trash" aria-hidden="true" /></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                @if (DeleteDialogOpen)
+                {
+                    <ModalDialog Title="Borrar Operación"
+                     Text="¿Estas seguro de realizar esta acción?"
+                     OnClose="@OnDeleteDialogClose">
+                    </ModalDialog>
+                }
+
+                @if (UpFileDialogOpen)
+                {
+                    <ModalDialogUplDoc Title="Cargar documento"
+                           Text=""
+                           OnClose="@OnUpFileClose"
+                           OnUpFile="@OnObtainFile">
+                    </ModalDialogUplDoc>
+                }
+            }
+        </div>
+        <footer class="main-footer">
+            <div class="btn-group" role="group">
+                <a class="btn btn-success" href="/operacion/create"><span class="oi oi-plus" /> Cargar Operación</a>
+            </div>
+        </footer>
+    </main>
+}
+
 
