@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.WebUtilities;
 using Newtonsoft.Json;
 using OptimusCustomsWebApp.Data;
 using OptimusCustomsWebApp.Data.Service;
@@ -14,13 +15,14 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace OptimusCustomsWebApp.Views
 {
     public partial class FacturaForm : ComponentBase
     {
         [Inject]
-        public NavigationManager Navigation { get; set; }
+        public NavigationManager NavManager { get; set; }
 
         [Inject]
         private IWebHostEnvironment Environment { get; set; }
@@ -46,11 +48,31 @@ namespace OptimusCustomsWebApp.Views
         protected async override Task OnInitializedAsync()
         {
             Service.IsBusy = true;
-            await Task.Factory.StartNew(() =>
+            
+            var uri = NavManager.ToAbsoluteUri(NavManager.Uri);
+            if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("idFactura", out var idFactura) 
+                && QueryHelpers.ParseQuery(uri.Query).TryGetValue("idOperacion", out var idOperacion))
             {
-                Model = new FacturaModel();
-                NumOp = "";
-            });
+                Model = await Service.GetFactura(int.Parse(idFactura));
+                if (Model != null && Model.IdFactura != 0)
+                {
+                    OpModel = await OperacionService.GetOperacion(int.Parse(idOperacion));
+                    NumOp = OpModel.NumOperacion;
+                    await OnValidateOperacion();
+                    FileSelected = true;
+
+                }
+            }
+            else
+            {
+                await Task.Factory.StartNew(() =>
+                {
+                    Model = new FacturaModel();
+                    NumOp = "";
+                });
+            }
+
+            
             Service.IsBusy = false;
         }
 
@@ -87,7 +109,7 @@ namespace OptimusCustomsWebApp.Views
                     var responseO = await OperacionService.UpdateOperacion(OpModel);
                     if(responseO.StatusCode == HttpStatusCode.OK)
                     {
-                        Navigation.NavigateTo("/factura");
+                        NavManager.NavigateTo("/factura");
                     }
                 }
             }
@@ -98,7 +120,7 @@ namespace OptimusCustomsWebApp.Views
         {
             await Task.Factory.StartNew(() =>
             {
-                Navigation.NavigateTo("/factura");
+                NavManager.NavigateTo("/factura");
             });
         }
 
@@ -108,7 +130,7 @@ namespace OptimusCustomsWebApp.Views
             var response = await Service.UpdateFactura(Model);
             if (response.IsSuccessStatusCode)
             {
-                Navigation.NavigateTo("/factura");
+                NavManager.NavigateTo("/factura");
             }
             Service.IsBusy = false;
         }
@@ -242,14 +264,14 @@ namespace OptimusCustomsWebApp.Views
                 if (IsOperationValid.Value)
                 {
                     builder.OpenElement(1, "label");
-                    builder.AddAttribute(2, "class", "text-success");
+                    builder.AddAttribute(2, "class", "text-success col-form-label col-md-2");
                     builder.AddContent(3, "Número de operación válido");
                     builder.CloseElement();
                 }
                 else
                 {
                     builder.OpenElement(1, "label");
-                    builder.AddAttribute(2, "class", "text-danger");
+                    builder.AddAttribute(2, "class", "text-danger col-form-label col-md-2");
                     builder.AddContent(3, "Número de operación inválido");
                     builder.CloseElement();
                 }
@@ -257,7 +279,7 @@ namespace OptimusCustomsWebApp.Views
             else
             {
                 builder.OpenElement(1, "label");
-                builder.AddAttribute(2, "class", "text-danger");
+                builder.AddAttribute(2, "class", "text-danger col-form-label col-md-2");
                 builder.AddContent(3, "Ingrese un número de operación");
                 builder.CloseElement();
             }

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.JSInterop;
 using OptimusCustomsWebApp.Data.Service;
+using OptimusCustomsWebApp.Interface;
 using OptimusCustomsWebApp.Model;
 using OptimusCustomsWebApp.Model.Enum;
 using System;
@@ -161,7 +162,15 @@ namespace OptimusCustomsWebApp.Views
         {
             UpFileDialogOpen = true;
             TipoDocumento = tipoDocumento;
+            SelectedOperacion = model;
             StateHasChanged();
+        }
+
+        private void OpenCreateFactura(OperacionModel model)
+        {
+            var query = new Dictionary<string, string> { { "idFactura", model.IdFactura.ToString() },
+                                                         { "idOperacion", model.IdOperacion.ToString()} };
+            NavManager.NavigateTo(QueryHelpers.AddQueryString("https://localhost:44307/factura/redirect", query));
         }
 
         private async Task OnUpFileClose(bool accepted)
@@ -187,7 +196,15 @@ namespace OptimusCustomsWebApp.Views
             try
             {
                 TipoDocumento = tipoDocumento;
-                await JSRuntime.InvokeAsync<object>("open", "http://localhost:43248/Operacion/document?idOperacion=" + model.IdOperacion + "&idTipoDocumento=" + ((int)TipoDocumento).ToString(), "_blank");
+                if (TipoDocumento == TipoDocumento.Factura)
+                {
+                    await JSRuntime.InvokeAsync<object>("open", "http://localhost:43248/Factura/pdf?idFactura=" + model.IdFactura, "_blank");
+                }
+                else
+                {
+                    await JSRuntime.InvokeAsync<object>("open", "http://localhost:43248/Operacion/document?idOperacion=" + model.IdOperacion + "&idTipoDocumento=" + ((int)TipoDocumento).ToString(), "_blank");
+                }
+
             }
             catch (Exception ex)
             {
@@ -216,15 +233,31 @@ namespace OptimusCustomsWebApp.Views
                 builder.AddMarkupContent(5, "<span class='oi oi-check' aria-hidden='true' />");
                 builder.CloseElement();
 
-                builder.OpenElement(6, "button");
-                builder.AddAttribute(7, "class", "btn btn-primary btn-sm");
-                builder.AddAttribute(8, "onclick",
-                    EventCallback.Factory.Create(owner,
-                       () => OpenUpdFileDialog(element, tipoDocumento)));
-                builder.AddMarkupContent(9, "<span class='oi oi-pencil' aria-hidden='true' />");
-                builder.CloseElement();
+                if (TipoDocumento == TipoDocumento.Factura)
+                {
+                    builder.OpenElement(6, "button");
+                    builder.AddAttribute(7, "class", "btn btn-primary btn-sm");
+                    builder.AddAttribute(8, "onclick",
+                        EventCallback.Factory.Create(owner,
+                           () => OpenCreateFactura(element)));
+                    builder.AddMarkupContent(9, "<span class='oi oi-pencil' aria-hidden='true' />");
+                    builder.CloseElement();
 
-                builder.AddMarkupContent(10, "</div>");
+                    builder.AddMarkupContent(10, "</div>");
+                }
+                else
+                {
+                    builder.OpenElement(6, "button");
+                    builder.AddAttribute(7, "class", "btn btn-primary btn-sm");
+                    builder.AddAttribute(8, "onclick",
+                        EventCallback.Factory.Create(owner,
+                           () => OpenUpdFileDialog(element, tipoDocumento)));
+                    builder.AddMarkupContent(9, "<span class='oi oi-pencil' aria-hidden='true' />");
+                    builder.CloseElement();
+
+                    builder.AddMarkupContent(10, "</div>");
+                }
+
             }
             else
             {
@@ -237,7 +270,7 @@ namespace OptimusCustomsWebApp.Views
                 builder.CloseElement();
             }
 
-            SelectedOperacion = element;
+
         };
 
         public static string RemoveQueryStringByKey(string url, string key)

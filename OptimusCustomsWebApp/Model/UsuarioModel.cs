@@ -27,7 +27,7 @@ namespace OptimusCustomsWebApp.Model
         [Required]
         public string Password { get; set; }
         public int IdUsuario { get; set; }
-        public int IdPrivilegio { get; set; }
+        public int IdTipoUsuario { get; set; }
         public string TipoUsuario { get; set; }
     }
 }

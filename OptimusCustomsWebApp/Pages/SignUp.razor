@@ -1,4 +1,5 @@
 ﻿@page "/signup"
+@page "/usuario/{IdUsuario}"
 
 @if (@Model != null)
 {
@@ -6,50 +7,74 @@
     <div class="container-fluid">
         <div class="">
             <div class="rounded d-flex justify-content-center">
-                <div class="col-md-4 col-sm-12 shadow-lg p-5 bg-light">
+                <div class="col-md-8 col-sm-12 shadow-lg p-5 bg-light">
                     <div class="text-center">
                         <h3 class="text-primary">Optimus Customs</h3>
                     </div>
 
                     <EditForm Model="@Model" OnValidSubmit="Register">
                         <DataAnnotationsValidator />
+
                         <div class="p-4">
                             <div class="input-group mb-3">
-
+                                <label class="col-form-label col-md-2">Nombre(s) </label>
                                 <InputText type="text" class="form-control" placeholder="Nombre(s)" @bind-Value="Model.Nombre" />
                             </div>
                             <div class="input-group mb-3">
+                                <label class="col-form-label col-md-2">Apellido(s) </label>
                                 <InputText type="text" class="form-control" placeholder="Apellido(s)" @bind-Value="Model.Apellido" />
                             </div>
                             <div class="input-group mb-3">
+                                <label class="col-form-label col-md-2">RFC </label>
                                 <InputText type="text" class="form-control" placeholder="RFC" @bind-Value="Model.RFC" />
                             </div>
                             <div class="input-group mb-3">
+                                <label class="col-form-label col-md-2">Razón Social </label>
                                 <InputText type="text" class="form-control" placeholder="Razón Social" @bind-Value="Model.RazonSocial" />
                             </div>
                             <div class="input-group mb-3">
+                                <label class="col-form-label col-md-2">E-Mail </label>
                                 <InputText type="email" class="form-control" placeholder="E-Mail" @bind-Value="Model.Mail" />
                             </div>
                             <div class="input-group mb-3">
+                                <label class="col-form-label col-md-2">Teléfono </label>
                                 <InputText type="phone" class="form-control" placeholder="Teléfono" @bind-Value="Model.Telefono" />
                             </div>
                             <div class="input-group mb-3">
+                                <label class="col-form-label col-md-2">Dirección </label>
                                 <InputText type="text" class="form-control" placeholder="Dirección" @bind-Value="Model.DireccionFiscal" />
                             </div>
-                            <div class="input-group mb-3">
-                                <InputText type="password" class="form-control" placeholder="Contraseña" @bind-Value="Model.Password" />
-                            </div>
-                            <div class="input-group mb-3">
-                                <InputSelect class="form-control" @bind-Value="IdTipoUsuario">
-                                    @foreach (var privilegio in TipoUsuario)
-                                        {
-                                        <option value="@privilegio.Id">@privilegio.Nombre</option>
-                                        }
-                                </InputSelect>
-                            </div>
 
-                            <input class="btn btn-primary text-center mt-2" type="submit" value="Registrarse" />
-                            <input class="btn btn-primary text-center mt-2" type="button" value="Cancelar" @onclick="Cancel"/>
+                            @if (IdUsuario == null)
+                            {
+                                <div class="input-group mb-3">
+                                    <label class="col-form-label col-md-2">Contraseña </label>
+                                    <InputText type="password" class="form-control" placeholder="Contraseña" @bind-Value="Model.Password" />
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="input-group mb-3">
+                                    <label class="col-form-label col-md-2">Tipo de usuario </label>
+                                    <InputSelect class="form-control" @bind-Value="IdTipoUsuario">
+                                        @foreach (var privilegio in TipoUsuario)
+                                        {
+                                            <option value="@privilegio.Id" selected="@(privilegio.Id == Model.IdTipoUsuario)">@privilegio.Nombre</option>
+                                        }
+                                    </InputSelect>
+                                </div>
+                            }
+
+                            @if (IdUsuario != null)
+                            {
+                                <input class="btn btn-primary text-center mt-2" type="button" @onclick="OnUpdate" value="Actualizar" />
+                            }
+                            else
+                            {
+                                <input class="btn btn-primary text-center mt-2" type="submit" value="Registrarse" />
+                            }
+                            <button class="btn btn-primary text-center mt-2" @onclick="Cancel">Cancelar</button>
+
                         </div>
                     </EditForm>
                 </div>

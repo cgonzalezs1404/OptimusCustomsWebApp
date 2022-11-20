@@ -43,8 +43,8 @@ else
                     <td>@model.TipoUsuario</td>
                     <td>
                         <div class="btn-group-sm">
-                            <a class="btn btn-primary" href="/cliente/@model.IdUsuario"><span class="oi oi-pencil" aria-hidden="true" /> Editar</a>
-                            <button class="btn btn-danger" @onclick="() => OpenDeleteDialog(model)"><span class="oi oi-trash" aria-hidden="true" />Borrar</button>
+                            <a class="btn btn-primary" href="/usuario/@model.IdUsuario"><span class="oi oi-pencil" aria-hidden="true" /></a>
+                            <button class="btn btn-danger" @onclick="() => OpenDeleteDialog(model)"><span class="oi oi-trash" aria-hidden="true" /></button>
                         </div>
                     </td>
                 </tr>

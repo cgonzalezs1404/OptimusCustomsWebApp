@@ -1,125 +1,126 @@
 ﻿@page "/factura/create"
 @page "/factura/{IdFactura}"
+@page "/factura/redirect"
 
 
 @if (Service.IsBusy)
 {
-    <div class="spinner"></div>
+    <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary" style="width:100px; height:100px;" role="status">
+            <span class="sr-only"></span>
+        </div>
+    </div>
 }
 else
 {
-    @if (Model == null)
+    @if (Model != null)
     {
-
-    }
-    else
-    {
-        <form class="form-control">
-
-            @if (IdFactura != null && !IdFactura.Equals(""))
-            {
-                <h3>Editar Factura</h3>
-            }
-            else
-            {
-                <h3>Cargar Factura</h3>
-            }
-
-
-            <div class="row">
-                <div class="col-md-4">
-                    <label class="form-label">Número de Operación</label>
-                    @if (OpModel == null)
-                    {
-                        <input id="numOperacion" type="text" class="@ValidationClass()" placeholder="Número de Operación" @bind="NumOp" />
-                        @DynamicFragment
-                    }
-                    else
-                    {
-                        <input id="numOperacion" type="text" class="@ValidationClass()" placeholder="Número de Operación" @bind="OpModel.NumOperacion" />
-                        @DynamicFragment
-                    }
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-4">
-                    <input type="button" class="btn btn-primary text-center mt-2" @onclick="@(async () => await OnValidateOperacion())" value="Validar" />
-                </div>
-            </div>
-
-            @if (IsOperationValid != null && IsOperationValid.Value)
-            {
-
-                @if (IdFactura == null || IdFactura.Equals(""))
-                {
-                    <div class="col-md-4">
-                        <label class="form-label">Factura (XML)</label>
-                        <InputFile OnChange="@OnInputFileChangeAsync" class="form-control" accept=".xml" />
-                    </div>
-
-                    <div class="col-md-4">
-                        <label class="form-label">Factura (PDF)</label>
-                        <InputFile OnChange="@OnInputFileChangeAsync" class="form-control" accept=".pdf" />
-                    </div>
-                }@if (FileSelected)
-                {
-                    <EditForm Model="@Model">
-
-                        <div class="col-md-4">
-                            <label class="form-label">Razón social</label>
-                            <InputText id="razonSocial" class="form-control" placeholder="Razón social" @bind-Value="@Model.RazonSocial" />
-                        </div>
-
-                        <div class="col-md-4">
-                            <label class="form-label">RFC</label>
-                            <InputText id="rfc" class="form-control" placeholder="RFC" @bind-Value="Model.RFC" />
-                        </div>
-
-                        <div class="col-md-4">
-                            <label class="form-label">Serie</label>
-                            <InputText id="serie" class="form-control" placeholder="Serie" @bind-Value="Model.Serie" />
-                        </div>
-
-                        <div class="col-md-4">
-                            <label class="form-label">Folio</label>
-                            <InputText id="folio" class="form-control" placeholder="folio" @bind-Value="Model.Folio" />
-                        </div>
-
-                        <div class="col-md-4">
-                            <label class="form-label">Fecha emisión</label>
-                            <InputDate id="fechaEmision" class="form-control" placeholder="fechaemision" @bind-Value="Model.FechaEmision" />
-                        </div>
-
-                        <div class="col-md-4">
-                            <label class="form-label">Descripción</label>
-                            <InputText id="descripcion" class="form-control" placeholder="Descripción" @bind-Value="Model.Descripcion" />
-                        </div>
-
-                        <div class="col-md-4">
-                            <label class="form-label">Total</label>
-                            <InputNumber id="total" class="form-control" placeholder="total" @bind-Value="Model.Total" />
-                        </div>
-
-                        <div class="col-md-4">
-                            <label class="form-label">¿Aprobada?</label>
-                            <InputCheckbox id="esAprobada" class="form-check-input" @bind-Value="Model.EsAprobado" />
-                        </div>
-
-                        <div class="col-md-2">
-                            <br>
+        <div class="container-fluid">
+            <div class="">
+                <div class="rounded d-flex justify-content-center">
+                    <div class="col-md-8 col-sm-12 shadow-lg p-5 bg-light">
+                        <div class="text-center">
                             @if (IdFactura != null && !IdFactura.Equals(""))
-                            {<button class="btn btn-success" @onclick="@(async () => await OnUpdate())">Actualizar</button> }
+                            {
+                                <h3 class="text-primary">Editar Factura</h3>
+                            }
                             else
-                            { <button class="btn btn-success" @onclick="@(async () => await OnCreate())">Guardar</button>}
-
-                            <button class="btn btn-danger" @onclick="@(async () => await OnCancel())">Cancelar</button>
+                            {
+                                <h3 class="text-primary">Cargar Factura</h3>
+                            }
                         </div>
 
-                    </EditForm>
-                }
+                        <div class="p-4">
+                            <div class="input-group mb-3">
+                                <label class="col-form-label col-md-2">Número de Operación</label>
+                                @if (OpModel == null)
+                                {
+                                    <div class="input-group mb-3">
+                                        <input id="numOperacion" type="text" class="@ValidationClass()" placeholder="Número de Operación" @bind="NumOp" />
+                                        @DynamicFragment
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="input-group mb-3">
+                                        <input id="numOperacion" type="text" class="@ValidationClass()" placeholder="Número de Operación" @bind="OpModel.NumOperacion" />
+                                        @DynamicFragment
+                                    </div>
+                                }
+                            </div>
+                            <input type="button" class="btn btn-primary text-center mt-2" @onclick="@(async () => await OnValidateOperacion())" value="Validar" />
+                        </div>
+                        @if (IsOperationValid != null && IsOperationValid.Value)
+                        {
+                            @if (IdFactura == null || IdFactura.Equals(""))
+                            {
+                                <div class="p-4">
+                                    <div class="input-group mb-3">
+                                        <label class="col-form-label col-md-2">Factura (XML) </label>
+                                        <InputFile OnChange="@OnInputFileChangeAsync" class="form-control" accept=".xml" />
+                                    </div>
+                                    <div class="input-group mb-3">
+                                        <label class="col-form-label col-md-2">Factura (PDF)</label>
+                                        <InputFile OnChange="@OnInputFileChangeAsync" class="form-control" accept=".pdf" />
+                                    </div>
+                                </div>
+                            }
+                            @if (FileSelected)
+                            {
+                                <EditForm Model="@Model">
 
-            }
-        </form>
+                                    <div class="p-4">
+                                        <div class="input-group mb-3">
+                                            <label class="col-form-label col-md-2">Razón Social </label>
+                                            <InputText class="form-control" placeholder="Razón Social" @bind-Value="Model.RazonSocial" />
+                                        </div>
+                                        <div class="input-group mb-3">
+                                            <label class="col-form-label col-md-2">Apellido(s) </label>
+                                            <InputText class="form-control" placeholder="Apellido(s)" @bind-Value="Model.RFC" />
+                                        </div>
+                                        <div class="input-group mb-3">
+                                            <label class="col-form-label col-md-2">RFC </label>
+                                            <InputText class="form-control" placeholder="RFC" @bind-Value="Model.RFC" />
+                                        </div>
+                                        <div class="input-group mb-3">
+                                            <label class="col-form-label col-md-2">Razón Social </label>
+                                            <InputText class="form-control" placeholder="Razón Social" @bind-Value="Model.Serie" />
+                                        </div>
+                                        <div class="input-group mb-3">
+                                            <label class="col-form-label col-md-2">E-Mail </label>
+                                            <InputText class="form-control" placeholder="E-Mail" @bind-Value="Model.Folio" />
+                                        </div>
+                                        <div class="input-group mb-3">
+                                            <label class="col-form-label col-md-2">Teléfono </label>
+                                            <InputDate class="form-control" placeholder="Teléfono" @bind-Value="Model.FechaEmision" />
+                                        </div>
+                                        <div class="input-group mb-3">
+                                            <label class="col-form-label col-md-2">Dirección </label>
+                                            <InputText class="form-control" placeholder="Dirección" @bind-Value="Model.Descripcion" />
+                                        </div>
+                                        <div class="input-group mb-3">
+                                            <label class="col-form-label col-md-2">Contraseña </label>
+                                            <InputNumber type="number" class="form-control" placeholder="Contraseña" @bind-Value="Model.Total" />
+                                        </div>
 
+                                        @if (IdFactura != null && !IdFactura.Equals(""))
+                                        {
+                                            <button class="btn btn-primary text-center mt-2" @onclick="@(async () => await OnUpdate())">Actualizar</button>
+                                        }
+                                        else
+                                        {
+                                            <button class="btn btn-primary text-center mt-2" @onclick="@(async () => await OnCreate())">Guardar</button>
+                                        }
+
+                                        <button class="btn btn-primary text-center mt-2" @onclick="@(async () => await OnCancel())">Cancelar</button>
+
+                                    </div>
+                                </EditForm>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
     }
 }

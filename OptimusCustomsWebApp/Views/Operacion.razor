@@ -108,7 +108,7 @@ else
                                     <td>@element.NumOperacion</td>
                                     <td>@element.TipoOperacion</td>
                                     <td>@element.RazonSocial</td>
-                                    <td>@element.IdFactura</td>
+                                    <td>@RenderComponent(this, element.ExisteFactura, element, Model.Enum.TipoDocumento.Factura)</td>
                                     <td>@RenderComponent(this, element.ExisteComprobantePago, element, Model.Enum.TipoDocumento.ComprobantePago)</td>
                                     <td>@RenderComponent(this, element.ExisteComplementoPago, element, Model.Enum.TipoDocumento.ComplementoPago)</td>
                                     <td>@RenderComponent(this, element.ExistePruebaEntrega, element, Model.Enum.TipoDocumento.PruebaEntrega)</td>

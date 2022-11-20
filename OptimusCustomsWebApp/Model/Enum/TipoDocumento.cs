@@ -18,6 +18,10 @@ namespace OptimusCustomsWebApp.Model.Enum
         /// <summary>
         /// 
         /// </summary>
-        ComprobantePago = 3
+        ComprobantePago = 3,
+        /// <summary>
+        /// 
+        /// </summary>
+        Factura = 4
     }
 }
