@@ -53,15 +53,23 @@ namespace OptimusCustomsWebApp.Views
             if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("idFactura", out var idFactura) 
                 && QueryHelpers.ParseQuery(uri.Query).TryGetValue("idOperacion", out var idOperacion))
             {
-                Model = await Service.GetFactura(int.Parse(idFactura));
-                if (Model != null && Model.IdFactura != 0)
+
+                if (!idFactura.Equals("0") && !idOperacion.Equals("0"))
                 {
+                    Model = await Service.GetFactura(int.Parse(idFactura));
                     OpModel = await OperacionService.GetOperacion(int.Parse(idOperacion));
                     NumOp = OpModel.NumOperacion;
                     await OnValidateOperacion();
                     FileSelected = true;
-
                 }
+                if (idFactura.Equals("0") && !idOperacion.Equals("0"))
+                {
+                    Model = new FacturaModel();
+                    OpModel = await OperacionService.GetOperacion(int.Parse(idOperacion));
+                    NumOp = OpModel.NumOperacion;
+                    await OnValidateOperacion();
+                    FileSelected = false;
+                }               
             }
             else
             {
@@ -69,6 +77,7 @@ namespace OptimusCustomsWebApp.Views
                 {
                     Model = new FacturaModel();
                     NumOp = "";
+                    FileSelected = false;
                 });
             }
 
@@ -81,11 +90,14 @@ namespace OptimusCustomsWebApp.Views
             Service.IsBusy = true;
             if (IdFactura != null && !IdFactura.Equals(""))
             {
-                Model = await Service.GetFactura(int.Parse(IdFactura));
-                if (Model != null && Model.IdFactura != 0)
-                {
-                    OpModel = await OperacionService.GetOperacion(Model.IdOperacion);
-                }
+                    Model = await Service.GetFactura(int.Parse(IdFactura));
+                    if (Model != null && Model.IdFactura != 0)
+                    {
+                        OpModel = await OperacionService.GetOperacion(Model.IdOperacion);
+                    NumOp = OpModel.NumOperacion;
+                        await OnValidateOperacion();
+                        FileSelected = true;
+                    }
             }
             Service.IsBusy = false;
         }

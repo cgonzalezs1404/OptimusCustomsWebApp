@@ -54,9 +54,18 @@ namespace OptimusCustomsWebApp.Data.Service
                 return null;
         }
 
-        public Task<HttpResponseMessage> DeleteOperacion(int id)
+        public async Task<HttpResponseMessage> DeleteOperacion(int id)
         {
-            throw new NotImplementedException();
+            HttpResponseMessage result = new HttpResponseMessage(System.Net.HttpStatusCode.Processing);
+            try
+            {
+                result = await httpClient.DeleteAsync("http://localhost:43248/Operacion/" + id.ToString());
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return result;
         }
 
         public async Task<List<OperacionModel>> GetOperaciones(string fromDate, string toDate)

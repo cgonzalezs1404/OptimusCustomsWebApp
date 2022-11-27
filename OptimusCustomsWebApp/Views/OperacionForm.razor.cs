@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.JSInterop;
 using OptimusCustomsWebApp.Data.Service;
@@ -33,12 +34,14 @@ namespace OptimusCustomsWebApp.Views
 
         public string IdUsuario { get; set; }
         public string IdTipoOperacion { get; set; }
+        private EditContext? editContext;
 
         protected async override Task OnInitializedAsync()
         {
             Model = new OperacionModel();
             UsersList = await CatalogoService.GetUsuarios();
             TipoOperacionList = await CatalogoService.GetTipoOperacion();
+            editContext = new EditContext(Model);
         }
 
         protected async override Task OnParametersSetAsync()
@@ -54,24 +57,24 @@ namespace OptimusCustomsWebApp.Views
 
         protected async Task OnCreate()
         {
-            Model.IdUsuario = int.Parse(IdUsuario);
-            Model.IdTipoOperacion = int.Parse(IdTipoOperacion);
-            var response = await Service.CreateOperacion(Model);
-            if (response.IsSuccessStatusCode)
+            if (editContext != null && editContext.Validate())
             {
-                Navigation.NavigateTo("/operacion");
+                var response = await Service.CreateOperacion(Model);
+                if (response.IsSuccessStatusCode)
+                {
+                    Navigation.NavigateTo("/operacion");
+                }
             }
+
         }
 
         protected async Task OnCancel()
         {
-            await JSRuntime.InvokeAsync<object>("history.go", -1);
+            await JSRuntime.InvokeAsync<string>("clientJsMethods.RedirectTo", "/operacion");
         }
 
         protected async Task OnUpdate()
         {
-            Model.IdUsuario = int.Parse(IdUsuario);
-            Model.IdTipoOperacion = int.Parse(IdTipoOperacion);
             var response = await Service.UpdateOperacion(Model);
             if (response.IsSuccessStatusCode)
             {

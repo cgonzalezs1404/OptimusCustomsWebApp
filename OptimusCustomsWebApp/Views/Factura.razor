@@ -97,8 +97,9 @@ else
                                 <th>Serie</th>
                                 <th>Folio</th>
                                 <th>Total</th>
-                                @*<th class="row-20">Descripción</th>*@
                                 <th>Aprobada</th>
+                                <th>Pagada</th>
+                                <th>Comentarios</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
@@ -117,10 +118,13 @@ else
                                     <td>@factura.Serie</td>
                                     <td>@factura.Folio</td>
                                     <td>@factura.Total.ToString("C2")</td>
-                                    @*<td class="row-20">@factura.Descripcion</td>*@
                                     <td>
                                         <input type="checkbox" checked="@factura.EsAprobado" readonly>
                                     </td>
+                                    <td>
+                                        <input type="checkbox" checked="@factura.EsPagada" readonly>
+                                    </td>
+                                    <td>@factura.Comentarios</td>
                                     <td>
                                         <div class="btn-group-sm">
                                             <button class="btn btn-success btn-sm" title="Ver"><span class="oi oi-eye" aria-hidden="true" /></button>

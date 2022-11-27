@@ -155,7 +155,7 @@ namespace OptimusCustomsWebApp.Views
         {
             DeleteDialogOpen = true;
             StateHasChanged();
-            Id = model.IdFactura.Value;
+            Id = model.IdOperacion;
         }
 
         private void OpenUpdFileDialog(OperacionModel model, TipoDocumento tipoDocumento)
@@ -168,7 +168,7 @@ namespace OptimusCustomsWebApp.Views
 
         private void OpenCreateFactura(OperacionModel model)
         {
-            var query = new Dictionary<string, string> { { "idFactura", model.IdFactura.ToString() },
+            var query = new Dictionary<string, string> { { "idFactura", model.IdFactura == null ? "0" : model.IdFactura.ToString() },
                                                          { "idOperacion", model.IdOperacion.ToString()} };
             NavManager.NavigateTo(QueryHelpers.AddQueryString("https://localhost:44307/factura/redirect", query));
         }
@@ -223,51 +223,60 @@ namespace OptimusCustomsWebApp.Views
         {
             if (status)
             {
-                builder.AddMarkupContent(1, "<div class='btn-group-sm'>");
-
-                builder.OpenElement(2, "button");
-                builder.AddAttribute(3, "class", "btn btn-success btn-sm");
-                builder.AddAttribute(4, "onclick",
+                builder.OpenElement(1, "button");
+                builder.AddAttribute(2, "class", "btn btn-success btn-sm");
+                builder.AddAttribute(3, "onclick",
                     EventCallback.Factory.Create(owner,
                        () => OnViewFileAction(element, tipoDocumento)));
-                builder.AddMarkupContent(5, "<span class='oi oi-check' aria-hidden='true' />");
+                builder.AddMarkupContent(4, "<span class='oi oi-check' aria-hidden='true' />");
                 builder.CloseElement();
 
-                if (TipoDocumento == TipoDocumento.Factura)
+                if (tipoDocumento == TipoDocumento.Factura)
                 {
-                    builder.OpenElement(6, "button");
-                    builder.AddAttribute(7, "class", "btn btn-primary btn-sm");
-                    builder.AddAttribute(8, "onclick",
+                    builder.OpenElement(5, "button");
+                    builder.AddAttribute(6, "class", "btn btn-primary btn-sm");
+                    builder.AddAttribute(7, "onclick",
                         EventCallback.Factory.Create(owner,
                            () => OpenCreateFactura(element)));
-                    builder.AddMarkupContent(9, "<span class='oi oi-pencil' aria-hidden='true' />");
+                    builder.AddMarkupContent(8, "<span class='oi oi-pencil' aria-hidden='true' />");
                     builder.CloseElement();
-
-                    builder.AddMarkupContent(10, "</div>");
                 }
                 else
                 {
-                    builder.OpenElement(6, "button");
-                    builder.AddAttribute(7, "class", "btn btn-primary btn-sm");
-                    builder.AddAttribute(8, "onclick",
+                    builder.OpenElement(5, "button");
+                    builder.AddAttribute(6, "class", "btn btn-primary btn-sm");
+                    builder.AddAttribute(7, "onclick",
                         EventCallback.Factory.Create(owner,
                            () => OpenUpdFileDialog(element, tipoDocumento)));
-                    builder.AddMarkupContent(9, "<span class='oi oi-pencil' aria-hidden='true' />");
+                    builder.AddMarkupContent(8, "<span class='oi oi-pencil' aria-hidden='true' />");
                     builder.CloseElement();
 
-                    builder.AddMarkupContent(10, "</div>");
                 }
 
             }
             else
             {
-                builder.OpenElement(1, "button");
-                builder.AddAttribute(2, "class", "btn btn-danger btn-sm");
-                builder.AddAttribute(3, "onclick",
-                    EventCallback.Factory.Create(owner,
-                       () => OpenUpdFileDialog(element, tipoDocumento)));
-                builder.AddMarkupContent(4, "<span class='oi oi-x' aria-hidden='true' />");
-                builder.CloseElement();
+                if(tipoDocumento == TipoDocumento.Factura)
+                {
+                    builder.OpenElement(1, "button");
+                    builder.AddAttribute(2, "class", "btn btn-danger btn-sm");
+                    builder.AddAttribute(3, "onclick",
+                        EventCallback.Factory.Create(owner,
+                           () => OpenCreateFactura(element)));
+                    builder.AddMarkupContent(4, "<span class='oi oi-x' aria-hidden='true' />");
+                    builder.CloseElement();
+                }
+                else
+                {
+                    builder.OpenElement(1, "button");
+                    builder.AddAttribute(2, "class", "btn btn-danger btn-sm");
+                    builder.AddAttribute(3, "onclick",
+                        EventCallback.Factory.Create(owner,
+                           () => OpenUpdFileDialog(element, tipoDocumento)));
+                    builder.AddMarkupContent(4, "<span class='oi oi-x' aria-hidden='true' />");
+                    builder.CloseElement();
+                }
+                
             }
 
 
