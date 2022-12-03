@@ -30,6 +30,8 @@ namespace OptimusCustomsWebApp.Views
         private IWebHostEnvironment Environment { get; set; }
         [Inject]
         private NavigationManager NavManager { get; set; }
+        [Inject]
+        private NavigationQueryService QueryService { get; set; }
 
         public List<OperacionModel> List;
         public OperacionModel SelectedOperacion { get; set; }
@@ -42,8 +44,6 @@ namespace OptimusCustomsWebApp.Views
         public TipoDocumento TipoDocumento { get; set; }
         public IBrowserFile BrowserFile { get; set; }
         public DocumentoModel DocumentoUpload { get; set; }
-
-        private Dictionary<string, string> Query { get; set; }
         public SessionData Usuario { get; set; }
 
         protected override async Task OnInitializedAsync()
@@ -89,6 +89,7 @@ namespace OptimusCustomsWebApp.Views
         {
             var query = new Dictionary<string, string> { { "fromDate", FromDate.ToString("yyyy-MM-dd") },
                                                          { "toDate", ToDate.ToString("yyyy-MM-dd")} };
+            QueryService.SetQueryString(TipoPagina.Factura, query);
             NavManager.NavigateTo(QueryHelpers.AddQueryString("https://localhost:44307/operacion", query));
             List = await Service.GetOperaciones(FromDate.ToString("yyyy-MM-dd"), ToDate.ToString("yyyy-MM-dd"));
         }
@@ -170,6 +171,7 @@ namespace OptimusCustomsWebApp.Views
         {
             var query = new Dictionary<string, string> { { "idFactura", model.IdFactura == null ? "0" : model.IdFactura.ToString() },
                                                          { "idOperacion", model.IdOperacion.ToString()} };
+            QueryService.SetQueryString(TipoPagina.Operacion, query);
             NavManager.NavigateTo(QueryHelpers.AddQueryString("https://localhost:44307/factura/redirect", query));
         }
 
@@ -281,23 +283,5 @@ namespace OptimusCustomsWebApp.Views
 
 
         };
-
-        public static string RemoveQueryStringByKey(string url, string key)
-        {
-            var uri = new Uri(url);
-
-            // this gets all the query string key value pairs as a collection
-            var newQueryString = HttpUtility.ParseQueryString(uri.Query);
-
-            // this removes the key if exists
-            newQueryString.Remove(key);
-
-            // this gets the page path from root without QueryString
-            string pagePathWithoutQueryString = uri.GetLeftPart(UriPartial.Path);
-
-            return newQueryString.Count > 0
-                ? String.Format("{0}?{1}", pagePathWithoutQueryString, newQueryString)
-                : pagePathWithoutQueryString;
-        }
     }
 }

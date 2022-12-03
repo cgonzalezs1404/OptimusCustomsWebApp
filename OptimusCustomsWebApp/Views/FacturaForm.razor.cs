@@ -16,7 +16,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace OptimusCustomsWebApp.Views
 {
@@ -182,19 +181,22 @@ namespace OptimusCustomsWebApp.Views
         /// <summary>
         /// 
         /// </summary>
-        protected void OnCancel()
+        private void OnCancel()
         {
-            new Task(() =>
-           {
-               if (QueryService.GetQueryString(TipoPagina.Factura) != null)
-               {
-                   NavManager.NavigateTo(QueryHelpers.AddQueryString("https://localhost:44307/factura", QueryService.GetQueryString(TipoPagina.Factura)));
-               }
-               else
-               {
-                   NavManager.NavigateTo("/factura");
-               }
-           }).Start();
+            if (NavManager.Uri.Contains("redirect"))
+            {
+                if (QueryService.GetQueryString(TipoPagina.Operacion) != null)
+                    NavManager.NavigateTo(QueryHelpers.AddQueryString("https://localhost:44307/operacion", QueryService.GetQueryString(TipoPagina.Operacion)));
+                else
+                    NavManager.NavigateTo("/operacion");
+            }
+            else
+            {
+                if (QueryService.GetQueryString(TipoPagina.Factura) != null)
+                    NavManager.NavigateTo(QueryHelpers.AddQueryString("https://localhost:44307/factura", QueryService.GetQueryString(TipoPagina.Factura)));
+                else
+                    NavManager.NavigateTo("/factura");
+            }
         }
 
         /// <summary>
@@ -207,7 +209,20 @@ namespace OptimusCustomsWebApp.Views
             var response = await Service.UpdateFactura(Model);
             if (response.IsSuccessStatusCode)
             {
-                NavManager.NavigateTo("/factura");
+                if (NavManager.Uri.Contains("redirect"))
+                {
+                    if (QueryService.GetQueryString(TipoPagina.Operacion) != null)
+                        NavManager.NavigateTo(QueryHelpers.AddQueryString("https://localhost:44307/operacion", QueryService.GetQueryString(TipoPagina.Operacion)));
+                    else
+                        NavManager.NavigateTo("/operacion");
+                }
+                else
+                {
+                    if (QueryService.GetQueryString(TipoPagina.Factura) != null)
+                        NavManager.NavigateTo(QueryHelpers.AddQueryString("https://localhost:44307/factura", QueryService.GetQueryString(TipoPagina.Factura)));
+                    else
+                        NavManager.NavigateTo("/factura");
+                }
             }
             Service.IsBusy = false;
         }

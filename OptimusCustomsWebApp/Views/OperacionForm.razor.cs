@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.JSInterop;
 using OptimusCustomsWebApp.Data.Service;
 using OptimusCustomsWebApp.Model;
@@ -15,11 +16,11 @@ namespace OptimusCustomsWebApp.Views
     public partial class OperacionForm : ComponentBase
     {
         [Inject]
-        public NavigationManager Navigation { get; set; }
+        public NavigationManager NavManager { get; set; }
         [Inject]
         private IWebHostEnvironment Environment { get; set; }
         [Inject]
-        protected IJSRuntime JSRuntime { get; set; }
+        protected NavigationQueryService QueryService { get; set; }
         public OperacionModel Model { get; set; }
         [Inject]
         public OperacionService Service { get; set; }
@@ -62,15 +63,24 @@ namespace OptimusCustomsWebApp.Views
                 var response = await Service.CreateOperacion(Model);
                 if (response.IsSuccessStatusCode)
                 {
-                    Navigation.NavigateTo("/operacion");
+                    if (QueryService.GetQueryString(TipoPagina.Operacion) != null)
+                        NavManager.NavigateTo(QueryHelpers.AddQueryString("https://localhost:44307/operacion", QueryService.GetQueryString(TipoPagina.Operacion)));
+                    else
+                        NavManager.NavigateTo("/operacion");
                 }
             }
 
         }
 
-        protected async Task OnCancel()
+        protected void OnCancel()
         {
-            await JSRuntime.InvokeAsync<string>("clientJsMethods.RedirectTo", "/operacion");
+
+            if (QueryService.GetQueryString(TipoPagina.Operacion) != null)
+                NavManager.NavigateTo(QueryHelpers.AddQueryString("https://localhost:44307/operacion", QueryService.GetQueryString(TipoPagina.Operacion)));
+            else
+                NavManager.NavigateTo("/operacion");
+
+
         }
 
         protected async Task OnUpdate()
@@ -78,7 +88,10 @@ namespace OptimusCustomsWebApp.Views
             var response = await Service.UpdateOperacion(Model);
             if (response.IsSuccessStatusCode)
             {
-                Navigation.NavigateTo("/operacion");
+                if (QueryService.GetQueryString(TipoPagina.Operacion) != null)
+                    NavManager.NavigateTo(QueryHelpers.AddQueryString("https://localhost:44307/operacion", QueryService.GetQueryString(TipoPagina.Operacion)));
+                else
+                    NavManager.NavigateTo("/operacion");
             }
         }
     }
