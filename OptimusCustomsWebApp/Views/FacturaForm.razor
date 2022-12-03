@@ -48,7 +48,8 @@ else
                                     </div>
                                 }
                             </div>
-                            <input type="button" class="btn btn-primary text-center mt-2" @onclick="@(async () => await OnValidateOperacion())" value="Validar" />
+                            <input type="button" class="btn btn-primary text-center mt-2" @onclick="OnValidateOperacion" value="Validar" />
+                            <input type="button" class="btn btn-primary text-center mt-2" @onclick="OnCancel" value="Cancelar" />
                         </div>
                         @if (IsOperationValid != null && IsOperationValid.Value)
                         {
@@ -113,14 +114,14 @@ else
 
                                         @if (IdFactura != null && !IdFactura.Equals(""))
                                         {
-                                            <button class="btn btn-primary text-center mt-2" @onclick="@(async () => await OnUpdate())">Actualizar</button>
+                                            <button class="btn btn-primary text-center mt-2" @onclick="OnUpdate">Actualizar</button>
                                         }
                                         else
                                         {
-                                            <button class="btn btn-primary text-center mt-2" @onclick="@(async () => await OnCreate())">Guardar</button>
+                                            <button class="btn btn-primary text-center mt-2" @onclick=" OnCreate">Guardar</button>
                                         }
 
-                                        <button class="btn btn-primary text-center mt-2" @onclick="@(async () => await OnCancel())">Cancelar</button>
+                                        <button class="btn btn-primary text-center mt-2" @onclick=" OnCancel">Cancelar</button>
 
                                     </div>
                                 </EditForm>

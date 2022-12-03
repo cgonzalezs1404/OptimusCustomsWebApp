@@ -62,7 +62,7 @@ namespace OptimusCustomsWebApp.Views
                 ToDate = DateTime.Today;
             }
             List = await Service.GetOperaciones(FromDate.ToString("yyyy-MM-dd"), ToDate.ToString("yyyy-MM-dd"));
-            Thread.Sleep(1000);
+            Thread.Sleep(500);
             Service.IsBusy = false;
 
         }

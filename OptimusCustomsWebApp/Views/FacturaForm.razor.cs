@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using OptimusCustomsWebApp.Data;
 using OptimusCustomsWebApp.Data.Service;
 using OptimusCustomsWebApp.Model;
+using OptimusCustomsWebApp.Model.Enum;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -21,39 +22,79 @@ namespace OptimusCustomsWebApp.Views
 {
     public partial class FacturaForm : ComponentBase
     {
+        /// <summary>
+        /// 
+        /// </summary>
         [Inject]
         public NavigationManager NavManager { get; set; }
-
+        /// <summary>
+        /// 
+        /// </summary>
         [Inject]
         private IWebHostEnvironment Environment { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        [Inject]
+        private NavigationQueryService QueryService { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
         public FacturaModel Model { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
         public OperacionModel OpModel { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
 
         [Inject]
         public FacturaService Service { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
         [Inject]
         public OperacionService OperacionService { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
 
         [Parameter]
         public string IdFactura { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
         public string NumOp { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
         public RenderFragment DynamicFragment { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
         public bool? IsOperationValid { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
         public bool FileSelected { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         protected async override Task OnInitializedAsync()
         {
             Service.IsBusy = true;
-            
+
+            //Verificacion de url factura/redirect para tomar parametros de la barra de navegacion.
             var uri = NavManager.ToAbsoluteUri(NavManager.Uri);
-            if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("idFactura", out var idFactura) 
+            if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("idFactura", out var idFactura)
                 && QueryHelpers.ParseQuery(uri.Query).TryGetValue("idOperacion", out var idOperacion))
             {
 
+                //Si la operacion y la factura son distintos a 0, significa que es una edicion de factura desde /operacion
                 if (!idFactura.Equals("0") && !idOperacion.Equals("0"))
                 {
                     Model = await Service.GetFactura(int.Parse(idFactura));
@@ -62,6 +103,7 @@ namespace OptimusCustomsWebApp.Views
                     await OnValidateOperacion();
                     FileSelected = true;
                 }
+                //Si la operacion es distinta a 0 y la factura es igual a 0, significa que es una creacion de factura desde /operacion
                 if (idFactura.Equals("0") && !idOperacion.Equals("0"))
                 {
                     Model = new FacturaModel();
@@ -69,8 +111,9 @@ namespace OptimusCustomsWebApp.Views
                     NumOp = OpModel.NumOperacion;
                     await OnValidateOperacion();
                     FileSelected = false;
-                }               
+                }
             }
+            //Accion basica desde factura/crear
             else
             {
                 await Task.Factory.StartNew(() =>
@@ -81,27 +124,35 @@ namespace OptimusCustomsWebApp.Views
                 });
             }
 
-            
+
             Service.IsBusy = false;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         protected async override Task OnParametersSetAsync()
         {
             Service.IsBusy = true;
             if (IdFactura != null && !IdFactura.Equals(""))
             {
-                    Model = await Service.GetFactura(int.Parse(IdFactura));
-                    if (Model != null && Model.IdFactura != 0)
-                    {
-                        OpModel = await OperacionService.GetOperacion(Model.IdOperacion);
+                Model = await Service.GetFactura(int.Parse(IdFactura));
+                if (Model != null && Model.IdFactura != 0)
+                {
+                    OpModel = await OperacionService.GetOperacion(Model.IdOperacion);
                     NumOp = OpModel.NumOperacion;
-                        await OnValidateOperacion();
-                        FileSelected = true;
-                    }
+                    await OnValidateOperacion();
+                    FileSelected = true;
+                }
             }
             Service.IsBusy = false;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         protected async Task OnCreate()
         {
             Service.IsBusy = true;
@@ -119,7 +170,7 @@ namespace OptimusCustomsWebApp.Views
                     OpModel.IdFactura = Model.IdFactura;
 
                     var responseO = await OperacionService.UpdateOperacion(OpModel);
-                    if(responseO.StatusCode == HttpStatusCode.OK)
+                    if (responseO.StatusCode == HttpStatusCode.OK)
                     {
                         NavManager.NavigateTo("/factura");
                     }
@@ -128,14 +179,28 @@ namespace OptimusCustomsWebApp.Views
             Service.IsBusy = false;
         }
 
-        protected async Task OnCancel()
+        /// <summary>
+        /// 
+        /// </summary>
+        protected void OnCancel()
         {
-            await Task.Factory.StartNew(() =>
-            {
-                NavManager.NavigateTo("/factura");
-            });
+            new Task(() =>
+           {
+               if (QueryService.GetQueryString(TipoPagina.Factura) != null)
+               {
+                   NavManager.NavigateTo(QueryHelpers.AddQueryString("https://localhost:44307/factura", QueryService.GetQueryString(TipoPagina.Factura)));
+               }
+               else
+               {
+                   NavManager.NavigateTo("/factura");
+               }
+           }).Start();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         protected async Task OnUpdate()
         {
             Service.IsBusy = true;
@@ -147,6 +212,10 @@ namespace OptimusCustomsWebApp.Views
             Service.IsBusy = false;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         private async Task OnValidateOperacion()
         {
             Service.IsBusy = true;
@@ -172,6 +241,11 @@ namespace OptimusCustomsWebApp.Views
             Service.IsBusy = false;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="e"></param>
+        /// <returns></returns>
         private async Task OnInputFileChangeAsync(InputFileChangeEventArgs e)
         {
 
@@ -206,6 +280,11 @@ namespace OptimusCustomsWebApp.Views
 
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="file"></param>
+        /// <returns></returns>
         private async Task<FacturaModel> CargaFactura(IBrowserFile file)
         {
             Service.IsBusy = true;

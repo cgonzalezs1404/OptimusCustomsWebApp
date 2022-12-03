@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.JSInterop;
 using OptimusCustomsWebApp.Data.Service;
 using OptimusCustomsWebApp.Model;
@@ -18,6 +19,10 @@ namespace OptimusCustomsWebApp.Views
         protected IJSRuntime JSRuntime { get; set; }
         [Inject]
         protected IHttpContextAccessor Accessor { get; set; }
+        [Inject]
+        private NavigationManager NavManager { get; set; }
+        [Inject]
+        private NavigationQueryService QueryService { get; set; }
 
         public List<FacturaModel> List;
         public bool DeleteDialogOpen { get; set; }
@@ -29,10 +34,19 @@ namespace OptimusCustomsWebApp.Views
         protected override async Task OnInitializedAsync()
         {
             Service.IsBusy = true;
-            FromDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
-            ToDate = DateTime.Today;
-            await OnSearch();
-            Thread.Sleep(1000);
+            var uri = NavManager.ToAbsoluteUri(NavManager.Uri);
+            if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("fromDate", out var fromDate) && QueryHelpers.ParseQuery(uri.Query).TryGetValue("toDate", out var toDate))
+            {
+                FromDate = Convert.ToDateTime(fromDate);
+                ToDate = Convert.ToDateTime(toDate);
+            }
+            else
+            {
+                FromDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+                ToDate = DateTime.Today;
+            }
+            List = await Service.GetFacturas(FromDate, ToDate);
+            Thread.Sleep(500);
             Service.IsBusy = false;
 
         }
@@ -57,6 +71,10 @@ namespace OptimusCustomsWebApp.Views
 
         private async Task OnSearch()
         {
+            var query = new Dictionary<string, string> { { "fromDate", FromDate.ToString("yyyy-MM-dd") },
+                                                         { "toDate", ToDate.ToString("yyyy-MM-dd")} };
+            NavManager.NavigateTo(QueryHelpers.AddQueryString("https://localhost:44307/factura", query));
+            QueryService.SetQueryString(Model.Enum.TipoPagina.Factura, query);
             List = await Service.GetFacturas(FromDate, ToDate);
         }
 
