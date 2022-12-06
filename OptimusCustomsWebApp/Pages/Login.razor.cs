@@ -39,21 +39,21 @@ namespace OptimusCustomsWebApp.Pages
             if (firstRender)
             {
 
-                string user = await JSRuntime.InvokeAsync<string>("clientCookiesMethods.GetCookie", "Username");
-                string pass = await JSRuntime.InvokeAsync<string>("clientCookiesMethods.GetCookie", "Password");
+                //string user = await JSRuntime.InvokeAsync<string>("clientCookiesMethods.GetCookie", "Username");
+                //string pass = await JSRuntime.InvokeAsync<string>("clientCookiesMethods.GetCookie", "Password");
 
-                if (user != null && pass != null)
-                {
-                    Model.Username = user;
-                    Model.Password = pass;
-                    Model.RememberMe = true;
+                //if (user != null && pass != null)
+                //{
+                //    Model.Username = user;
+                //    Model.Password = pass;
+                //    Model.RememberMe = true;
 
-                    Session.Items.Add("Username", Model.Username);
-                    Session.Items.Add("Password", Model.Password);
+                //    Session.Items.Add("Username", Model.Username);
+                //    Session.Items.Add("Password", Model.Password);
                     
 
-                    await JSRuntime.InvokeAsync<string>("clientJsMethods.RedirectTo", "/factura");
-                }
+                //    await JSRuntime.InvokeAsync<string>("clientJsMethods.RedirectTo", "/factura");
+                //}
             }
 
         }
