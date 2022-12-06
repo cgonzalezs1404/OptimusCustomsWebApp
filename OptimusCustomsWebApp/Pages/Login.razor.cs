@@ -34,30 +34,6 @@ namespace OptimusCustomsWebApp.Pages
 
         }
 
-        protected override async Task OnAfterRenderAsync(bool firstRender)
-        {
-            if (firstRender)
-            {
-
-                //string user = await JSRuntime.InvokeAsync<string>("clientCookiesMethods.GetCookie", "Username");
-                //string pass = await JSRuntime.InvokeAsync<string>("clientCookiesMethods.GetCookie", "Password");
-
-                //if (user != null && pass != null)
-                //{
-                //    Model.Username = user;
-                //    Model.Password = pass;
-                //    Model.RememberMe = true;
-
-                //    Session.Items.Add("Username", Model.Username);
-                //    Session.Items.Add("Password", Model.Password);
-                    
-
-                //    await JSRuntime.InvokeAsync<string>("clientJsMethods.RedirectTo", "/factura");
-                //}
-            }
-
-        }
-
         private async Task SignIn()
         {
             var result = await Service.LoginUsuario(Model.Username, Model.Password);
