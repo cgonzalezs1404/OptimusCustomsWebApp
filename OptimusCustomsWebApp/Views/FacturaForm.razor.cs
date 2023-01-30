@@ -39,6 +39,11 @@ namespace OptimusCustomsWebApp.Views
         /// <summary>
         /// 
         /// </summary>
+        [Inject]
+        private CatalogoService CatalogoService { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
         public FacturaModel Model { get; set; }
         /// <summary>
         /// 
@@ -55,6 +60,11 @@ namespace OptimusCustomsWebApp.Views
         /// </summary>
         [Inject]
         public OperacionService OperacionService { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        [Inject]
+        public UsuarioService UsuarioService { get; set; }
         /// <summary>
         /// 
         /// </summary>
@@ -78,6 +88,18 @@ namespace OptimusCustomsWebApp.Views
         /// 
         /// </summary>
         public bool FileSelected { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public List<CatalogoModel> UsersList { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string IdUsuario { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        private SessionData SessionData { get; set; }
 
         /// <summary>
         /// 
@@ -86,6 +108,9 @@ namespace OptimusCustomsWebApp.Views
         protected async override Task OnInitializedAsync()
         {
             Service.IsBusy = true;
+            UsersList = await CatalogoService.GetUsuarios();
+            SessionData = await UsuarioService.GetSessionData();
+            IdUsuario = SessionData.IdUsuario.ToString();
 
             //Verificacion de url factura/redirect para tomar parametros de la barra de navegacion.
             var uri = NavManager.ToAbsoluteUri(NavManager.Uri);
@@ -233,6 +258,7 @@ namespace OptimusCustomsWebApp.Views
         /// <returns></returns>
         private async Task OnValidateOperacion()
         {
+            string message = "Número de operación válido";
             Service.IsBusy = true;
             if (!NumOp.Equals(""))
             {
@@ -241,17 +267,30 @@ namespace OptimusCustomsWebApp.Views
                 {
                     OpModel = response;
                     IsOperationValid = true;
+
+                    //if (response.IdFactura == null)
+                    //{
+                    //    OpModel = response;
+                    //    IsOperationValid = true;
+                    //}
+                    //else
+                    //{
+                    //    IsOperationValid = false;
+                    //    message = "La operación ya tiene asignada una factura";
+                    //}
                 }
                 else
                 {
                     IsOperationValid = false;
+                    message = "Número de operación inválido";
                 }
             }
             else
             {
                 IsOperationValid = false;
+                message = "Ingrese un número de operación";
             }
-            DynamicFragment = RenderComponent();
+            DynamicFragment = RenderComponent(IsOperationValid.Value, message);
             ValidationClass();
             Service.IsBusy = false;
         }
@@ -363,32 +402,40 @@ namespace OptimusCustomsWebApp.Views
         /// 
         /// </summary>
         /// <returns></returns>
-        private RenderFragment RenderComponent() => builder =>
+        private RenderFragment RenderComponent(bool isValid, string message) => builder =>
         {
-            if (!NumOp.Equals(""))
-            {
-                if (IsOperationValid.Value)
-                {
-                    builder.OpenElement(1, "label");
-                    builder.AddAttribute(2, "class", "text-success col-form-label col-md-2");
-                    builder.AddContent(3, "Número de operación válido");
-                    builder.CloseElement();
-                }
-                else
-                {
-                    builder.OpenElement(1, "label");
-                    builder.AddAttribute(2, "class", "text-danger col-form-label col-md-2");
-                    builder.AddContent(3, "Número de operación inválido");
-                    builder.CloseElement();
-                }
-            }
+            builder.OpenElement(1, "label");
+            if (isValid)
+                builder.AddAttribute(2, "class", "text-success col-form-label col-md-2");
             else
-            {
-                builder.OpenElement(1, "label");
                 builder.AddAttribute(2, "class", "text-danger col-form-label col-md-2");
-                builder.AddContent(3, "Ingrese un número de operación");
-                builder.CloseElement();
-            }
+            builder.AddContent(3, message);
+            builder.CloseElement();
+
+            //if (!NumOp.Equals(""))
+            //{
+            //    if (IsOperationValid.Value)
+            //    {
+            //        builder.OpenElement(1, "label");
+            //        builder.AddAttribute(2, "class", "text-success col-form-label col-md-2");
+            //        builder.AddContent(3, "Número de operación válido");
+            //        builder.CloseElement();
+            //    }
+            //    else
+            //    {
+            //        builder.OpenElement(1, "label");
+            //        builder.AddAttribute(2, "class", "text-danger col-form-label col-md-2");
+            //        builder.AddContent(3, "Número de operación inválido");
+            //        builder.CloseElement();
+            //    }
+            //}
+            //else
+            //{
+            //    builder.OpenElement(1, "label");
+            //    builder.AddAttribute(2, "class", "text-danger col-form-label col-md-2");
+            //    builder.AddContent(3, "Ingrese un número de operación");
+            //    builder.CloseElement();
+            //}
         };
 
         /// <summary>

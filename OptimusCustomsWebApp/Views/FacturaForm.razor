@@ -71,6 +71,17 @@ else
                                 <EditForm Model="@Model">
 
                                     <div class="p-4">
+
+                                        <div class="input-group mb-3">
+                                            <label class="col-form-label col-md-2">Usuario </label>
+                                            <InputSelect class="form-control" @bind-Value="IdUsuario">
+                                                @if (UsersList != null)
+                                                    @foreach (var user in UsersList)
+                                                    {
+                                                        <option value="@user.Id" selected="@(user.Id == Convert.ToInt32(IdUsuario))">@user.Nombre</option>
+                                                    }
+                                            </InputSelect>
+                                        </div>
                                         <div class="input-group mb-3">
                                             <label class="col-form-label col-md-2">Razón social</label>
                                             <InputText class="form-control" placeholder="Razón social" @bind-Value="Model.RazonSocial" />

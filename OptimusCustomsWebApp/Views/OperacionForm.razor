@@ -23,7 +23,7 @@
                                 <InputText type="text" class="form-control" placeholder="Nombre(s)" @bind-Value="Model.NumOperacion" />
                             </div>
 
-                            <div class="input-group mb-3">
+                            @*<div class="input-group mb-3">
                                 <label class="col-form-label col-md-2">Tipo de usuario </label>
                                 <InputSelect class="form-control" @bind-Value="Model.IdUsuario">
                                     @if (UsersList != null)
@@ -32,7 +32,7 @@
                                             <option value="@user.Id" selected="@(user.Id == Convert.ToInt32(IdUsuario))">@user.Nombre</option>
                                         }
                                 </InputSelect>
-                            </div>
+                            </div>*@
 
                             <div class="input-group mb-3">
                                 <label class="col-form-label col-md-2">Tipo de operación </label>

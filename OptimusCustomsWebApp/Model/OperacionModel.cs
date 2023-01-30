@@ -12,7 +12,7 @@ namespace OptimusCustomsWebApp.Model
         [Required]
         public int IdTipoOperacion { get; set; }
         public string TipoOperacion { get; set; }
-        [Required]
+        //[Required] Comentado por sustitucion de id de usuario activo.
         public int? IdUsuario { get; set; }
         public string RazonSocial { get; set; }
         public int? IdFactura { get; set; }

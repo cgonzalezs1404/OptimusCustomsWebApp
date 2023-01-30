@@ -31,6 +31,7 @@ namespace OptimusCustomsWebApp.Views
         private NavigationManager NavManager { get; set; }
         [Inject]
         private UsuarioService UsuarioService { get; set; }
+        [Inject]
         private NavigationQueryService QueryService { get; set; }
 
         public List<OperacionModel> List;
