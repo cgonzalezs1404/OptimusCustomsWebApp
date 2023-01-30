@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.JSInterop;
 using OptimusCustomsWebApp.Data.Service;
@@ -16,22 +17,23 @@ namespace OptimusCustomsWebApp.Views
     public partial class OperacionForm : ComponentBase
     {
         [Inject]
-        public NavigationManager NavManager { get; set; }
+        private NavigationManager NavManager { get; set; }
         [Inject]
         private IWebHostEnvironment Environment { get; set; }
         [Inject]
-        protected NavigationQueryService QueryService { get; set; }
-        public OperacionModel Model { get; set; }
+        private NavigationQueryService QueryService { get; set; }
+        private OperacionModel Model { get; set; }
         [Inject]
-        public OperacionService Service { get; set; }
+        private OperacionService Service { get; set; }
         [Inject]
-        public CatalogoService CatalogoService { get; set; }
-
-        public List<CatalogoModel> UsersList { get; set; }
-        public List<CatalogoModel> TipoOperacionList { get; set; }
-
+        private CatalogoService CatalogoService { get; set; }
+        [Inject]
+        private UsuarioService UsuarioService { get; set; }
         [Parameter]
         public string IdOperacion { get; set; }
+        public List<CatalogoModel> UsersList { get; set; }
+        public List<CatalogoModel> TipoOperacionList { get; set; }
+        public SessionData Usuario { get; set; }
 
         public string IdUsuario { get; set; }
         public string IdTipoOperacion { get; set; }
@@ -43,6 +45,8 @@ namespace OptimusCustomsWebApp.Views
             UsersList = await CatalogoService.GetUsuarios();
             TipoOperacionList = await CatalogoService.GetTipoOperacion();
             editContext = new EditContext(Model);
+            Usuario = await UsuarioService.GetSessionData();
+            IdUsuario = Usuario.IdUsuario.ToString();
         }
 
         protected async override Task OnParametersSetAsync()

@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.JSInterop;
 using OptimusCustomsWebApp.Data.Service;
-using OptimusCustomsWebApp.Interface;
 using OptimusCustomsWebApp.Model;
 using OptimusCustomsWebApp.Model.Enum;
 using System;
@@ -31,6 +30,7 @@ namespace OptimusCustomsWebApp.Views
         [Inject]
         private NavigationManager NavManager { get; set; }
         [Inject]
+        private UsuarioService UsuarioService { get; set; }
         private NavigationQueryService QueryService { get; set; }
 
         public List<OperacionModel> List;
@@ -69,27 +69,18 @@ namespace OptimusCustomsWebApp.Views
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            Usuario = await GetSession();
+            Usuario = await UsuarioService.GetSessionData();
             if (Usuario != null && (Usuario.Username == null && Usuario.Password == null))
             {
                 await JSRuntime.InvokeAsync<string>("clientJsMethods.RedirectTo", "/login");
             }
         }
 
-        private async Task<SessionData> GetSession()
-        {
-            var result = new SessionData();
-            result.Username = Accessor.HttpContext == null ? null : Accessor.HttpContext.Session.GetString("Username");
-            result.Password = Accessor.HttpContext == null ? null : Accessor.HttpContext.Session.GetString("Password");
-            await InvokeAsync(() => StateHasChanged());
-            return result;
-        }
-
         private async Task OnSearch()
         {
             var query = new Dictionary<string, string> { { "fromDate", FromDate.ToString("yyyy-MM-dd") },
                                                          { "toDate", ToDate.ToString("yyyy-MM-dd")} };
-            QueryService.SetQueryString(TipoPagina.Factura, query);
+            QueryService.SetQueryString(TipoPagina.Operacion, query);
             NavManager.NavigateTo(QueryHelpers.AddQueryString("https://localhost:44307/operacion", query));
             List = await Service.GetOperaciones(FromDate.ToString("yyyy-MM-dd"), ToDate.ToString("yyyy-MM-dd"));
         }

@@ -23,6 +23,8 @@ namespace OptimusCustomsWebApp.Views
         private NavigationManager NavManager { get; set; }
         [Inject]
         private NavigationQueryService QueryService { get; set; }
+        [Inject]
+        private UsuarioService UsuarioService { get; set; }
 
         public List<FacturaModel> List;
         public bool DeleteDialogOpen { get; set; }
@@ -53,20 +55,11 @@ namespace OptimusCustomsWebApp.Views
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            Usuario = await GetSession();
+            Usuario = await UsuarioService.GetSessionData();
             if (Usuario != null && (Usuario.Username == null && Usuario.Password == null))
             {
                 await JSRuntime.InvokeAsync<string>("clientJsMethods.RedirectTo", "/login");
             }
-        }
-
-        private async Task<SessionData> GetSession()
-        {
-            var result = new SessionData();
-            result.Username = Accessor.HttpContext == null ? null : Accessor.HttpContext.Session.GetString("Username");
-            result.Password = Accessor.HttpContext == null ? null : Accessor.HttpContext.Session.GetString("Password");
-            await InvokeAsync(() => StateHasChanged());
-            return result;
         }
 
         private async Task OnSearch()

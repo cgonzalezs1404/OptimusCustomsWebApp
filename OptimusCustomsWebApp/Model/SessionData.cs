@@ -15,5 +15,6 @@ namespace OptimusCustomsWebApp.Model
         public string Password { get; set; }
         [DefaultValue (false)]
         public bool RememberMe { get; set; }
+        public int? IdUsuario { get; set; }
     }
 }

@@ -29,7 +29,7 @@
                                     @if (UsersList != null)
                                         @foreach (var user in UsersList)
                                         {
-                                            <option value="@user.Id" selected="@(user.Id == Model.IdUsuario)">@user.Nombre</option>
+                                            <option value="@user.Id" selected="@(user.Id == Convert.ToInt32(IdUsuario))">@user.Nombre</option>
                                         }
                                 </InputSelect>
                             </div>

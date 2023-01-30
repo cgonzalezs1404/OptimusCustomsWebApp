@@ -42,18 +42,20 @@ namespace OptimusCustomsWebApp.Pages
 
                 if (!Session.Items.ContainsKey("Username") 
                     && !Session.Items.ContainsKey("Password") 
+                    && !Session.Items.ContainsKey("Id")
                     )
                 {
                     //Add to the Singleton scoped Item
                     Session.Items.Add("Username", Model.Username);
                     Session.Items.Add("Password", Model.Password);
-                    
+                    Session.Items.Add("Id", result.IdUsuario);
 
 
                     if (Model.RememberMe)
                     {
                         await JSRuntime.InvokeVoidAsync("clientCookiesMethods.SetCookie", new object[] { "Username", Model.Username, 30 });
                         await JSRuntime.InvokeVoidAsync("clientCookiesMethods.SetCookie", new object[] { "Password", Model.Password, 30 });
+                        await JSRuntime.InvokeVoidAsync("clientCookiesMethods.SetCookie", new object[] { "Id", result.IdUsuario, 30 });
                     }
 
                     await JSRuntime.InvokeAsync<string>("clientJsMethods.RedirectTo", "/factura");

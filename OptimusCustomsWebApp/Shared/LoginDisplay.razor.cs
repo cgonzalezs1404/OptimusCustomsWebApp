@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Http;
 using Microsoft.JSInterop;
+using OptimusCustomsWebApp.Data.Service;
 using OptimusCustomsWebApp.Helpers;
+using OptimusCustomsWebApp.Interface;
 using OptimusCustomsWebApp.Model;
 using System;
 using System.Collections.Generic;
@@ -18,19 +20,15 @@ namespace OptimusCustomsWebApp.Shared
         protected IJSRuntime JSRuntime { get; set; }
         [Inject]
         protected IHttpContextAccessor Accessor { get; set; }
+        [Inject]
+        protected UsuarioService UsuarioService { get; set; }
         public SessionData Usuario { get; set; }
-
-        private async Task GetSession()
-        {
-            Usuario = new SessionData();
-            Usuario.Username = Accessor.HttpContext.Session.GetString("Username");
-            Usuario.Password = Accessor.HttpContext.Session.GetString("Password");
-            await InvokeAsync(() => StateHasChanged());
-        }
 
         protected override async Task OnInitializedAsync()
         {
-            await GetSession();
+            //await GetSession();
+            Usuario = await UsuarioService.GetSessionData();
+            await InvokeAsync(() => StateHasChanged());
         }
 
         private async Task LogOut()
@@ -40,6 +38,7 @@ namespace OptimusCustomsWebApp.Shared
 
             await JSRuntime.InvokeVoidAsync("clientCookiesMethods.DeleteCookie", "Username");
             await JSRuntime.InvokeVoidAsync("clientCookiesMethods.DeleteCookie", "Password");
+            await JSRuntime.InvokeVoidAsync("clientCookiesMethods.DeleteCookie", "Id");
         }
     }
 }

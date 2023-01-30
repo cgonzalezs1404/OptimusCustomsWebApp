@@ -17,6 +17,7 @@ namespace OptimusCustomsWebApp.Helpers
         private readonly SessionState session;
         public string Username;
         public string Password;
+        public int? IdUsuario;
 
         CookieContainer cookie;
         HttpClient HttpClient;
@@ -27,14 +28,17 @@ namespace OptimusCustomsWebApp.Helpers
 
             string user = accessor.HttpContext.Request.Cookies["Username"];
             string pass = accessor.HttpContext.Request.Cookies["Password"];
+            int? idUser = Convert.ToInt32(accessor.HttpContext.Request.Cookies["Id"]);
 
-            if(user!= null && pass != null)
+            if(user!= null && pass != null && idUser != null)
             {
                 Username = user;
                 Password = pass;
+                IdUsuario = idUser;
 
                 accessor.HttpContext.Session.SetString("Username", Username);
                 accessor.HttpContext.Session.SetString("Password", Password);
+                accessor.HttpContext.Session.SetInt32("Id", IdUsuario.Value);
 
                 accessor.HttpContext.Response.Redirect("/factura");
             }
@@ -53,6 +57,7 @@ namespace OptimusCustomsWebApp.Helpers
             //If session already has data
             Username = accessor.HttpContext.Session.GetString("Username");
             Password = accessor.HttpContext.Session.GetString("Password");
+            IdUsuario = accessor.HttpContext.Session.GetInt32("Id");
 
             //If server session is null
             if (session.Items.ContainsKey("Username") && Username == null)
@@ -72,13 +77,20 @@ namespace OptimusCustomsWebApp.Helpers
                 session.Items.Remove("Password");
             }
 
+            if(session.Items.ContainsKey("Id") && IdUsuario == null)
+            {
+                IdUsuario = Convert.ToInt32(session.Items["Id"]);
+                accessor.HttpContext.Session.SetInt32("Id", IdUsuario.Value);
+                session.Items.Remove("Id");
+            }
+
             //If Session is not expired yet then  navigate to home
-            if (!string.IsNullOrEmpty(Username) && !string.IsNullOrEmpty(Password) && accessor.HttpContext.Request.Path == "/")
+            if (!string.IsNullOrEmpty(Username) && !string.IsNullOrEmpty(Password) && IdUsuario != null && accessor.HttpContext.Request.Path == "/")
             {
                 accessor.HttpContext.Response.Redirect("/factura");
             }
             //If Session is expired then navigate to login
-            else if (string.IsNullOrEmpty(Username) && string.IsNullOrEmpty(Password) && accessor.HttpContext.Request.Path != "/")
+            else if (string.IsNullOrEmpty(Username) && string.IsNullOrEmpty(Password) && IdUsuario == null && accessor.HttpContext.Request.Path != "/")
             {
                 accessor.HttpContext.Response.Redirect("/");
             }

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using OptimusCustomsWebApp.Interface;
 using OptimusCustomsWebApp.Model;
@@ -25,13 +26,16 @@ namespace OptimusCustomsWebApp.Data.Service
         /// </summary>
         private readonly HttpClient httpClient;
 
+        protected IHttpContextAccessor Accessor { get; set; }
+
         /// <summary>
         /// 
         /// </summary>
         /// <param name="httpClient"></param>
-        public UsuarioService(HttpClient httpClient)
+        public UsuarioService(HttpClient httpClient, IHttpContextAccessor accesor)
         {
             this.httpClient = httpClient;
+            this.Accessor = accesor;
         }
 
         public bool IsBusy { get; set; }
@@ -77,6 +81,19 @@ namespace OptimusCustomsWebApp.Data.Service
 
             }
             return result;
+        }
+
+        ///
+        public Task<SessionData> GetSessionData()
+        {
+            SessionData result = new SessionData
+            {
+                Username = Accessor.HttpContext.Session.GetString("Username"),
+                Password = Accessor.HttpContext.Session.GetString("Password"),
+                IdUsuario = Accessor.HttpContext.Session.GetInt32("Id")
+            };
+            return Task.FromResult(result);
+
         }
 
         /// <summary>

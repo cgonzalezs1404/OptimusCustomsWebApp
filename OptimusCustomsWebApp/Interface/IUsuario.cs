@@ -48,5 +48,10 @@ namespace OptimusCustomsWebApp.Interface
         /// <param name="cliente"></param>
         /// <returns></returns>
         Task<HttpResponseMessage> DeleteUsuario(int idCliente);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        Task<SessionData> GetSessionData();
     }
 }
