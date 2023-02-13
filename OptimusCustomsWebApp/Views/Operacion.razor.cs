@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.JSInterop;
 using OptimusCustomsWebApp.Data.Service;
@@ -10,29 +9,21 @@ using OptimusCustomsWebApp.Model.Enum;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Web;
 
 namespace OptimusCustomsWebApp.Views
 {
     public partial class Operacion
     {
         [Inject]
-        protected OperacionService Service { get; set; }
-        [Inject]
         protected IJSRuntime JSRuntime { get; set; }
-        [Inject]
-        protected IHttpContextAccessor Accessor { get; set; }
         [Inject]
         private IWebHostEnvironment Environment { get; set; }
         [Inject]
         private NavigationManager NavManager { get; set; }
         [Inject]
-        private UsuarioService UsuarioService { get; set; }
-        [Inject]
-        private NavigationQueryService QueryService { get; set; }
+        private ServiceContainer ServiceContainer { get; set; }
 
         public List<OperacionModel> List;
         public OperacionModel SelectedOperacion { get; set; }
@@ -46,31 +37,47 @@ namespace OptimusCustomsWebApp.Views
         public IBrowserFile BrowserFile { get; set; }
         public DocumentoModel DocumentoUpload { get; set; }
         public SessionData Usuario { get; set; }
+        public List<CatalogoModel> CatalogoTOperacion { get; set; }
+        public List<CatalogoModel> CatalogoUsuarios { get; set; }
+        public int SelectedOperacionId { get; set; }
+        public int SelectedUsuarioId { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
 
-            Service.IsBusy = true;
+            ServiceContainer.IsBusy = true;
+            Usuario = await ServiceContainer.UsuarioService.GetSessionData();
+            CatalogoTOperacion = await ServiceContainer.CatalogoService.GetTipoOperacion();
+            CatalogoUsuarios = await ServiceContainer.CatalogoService.GetUsuarios();
+
             var uri = NavManager.ToAbsoluteUri(NavManager.Uri);
-            if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("fromDate", out var fromDate) && QueryHelpers.ParseQuery(uri.Query).TryGetValue("toDate", out var toDate))
+            if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("fromDate", out var fromDate)
+                && QueryHelpers.ParseQuery(uri.Query).TryGetValue("toDate", out var toDate)
+                && QueryHelpers.ParseQuery(uri.Query).TryGetValue("tipoOperacion", out var tipoOperacion)
+                && QueryHelpers.ParseQuery(uri.Query).TryGetValue("usuario", out var usuario)
+                )
             {
                 FromDate = Convert.ToDateTime(fromDate);
                 ToDate = Convert.ToDateTime(toDate);
+                SelectedOperacionId = Convert.ToInt32(tipoOperacion);
+                SelectedOperacionId = Convert.ToInt32(usuario);
             }
             else
             {
                 FromDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
                 ToDate = DateTime.Today;
+                SelectedOperacionId = 0;
+                SelectedUsuarioId = Usuario == null ? 0 : Usuario.IdUsuario.Value;
             }
-            List = await Service.GetOperaciones(FromDate.ToString("yyyy-MM-dd"), ToDate.ToString("yyyy-MM-dd"));
+            List = await ServiceContainer.OperacionService.GetOperaciones(GetFilters());
+            
             Thread.Sleep(500);
-            Service.IsBusy = false;
+            ServiceContainer.IsBusy = false;
 
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            Usuario = await UsuarioService.GetSessionData();
             if (Usuario != null && (Usuario.Username == null && Usuario.Password == null))
             {
                 await JSRuntime.InvokeAsync<string>("clientJsMethods.RedirectTo", "/login");
@@ -79,19 +86,18 @@ namespace OptimusCustomsWebApp.Views
 
         private async Task OnSearch()
         {
-            var query = new Dictionary<string, string> { { "fromDate", FromDate.ToString("yyyy-MM-dd") },
-                                                         { "toDate", ToDate.ToString("yyyy-MM-dd")} };
-            QueryService.SetQueryString(TipoPagina.Operacion, query);
-            NavManager.NavigateTo(QueryHelpers.AddQueryString("https://localhost:44307/operacion", query));
-            List = await Service.GetOperaciones(FromDate.ToString("yyyy-MM-dd"), ToDate.ToString("yyyy-MM-dd"));
+
+            ServiceContainer.QueryService.SetQueryString(TipoPagina.Operacion, GetFilters());
+            NavManager.NavigateTo(QueryHelpers.AddQueryString("https://localhost:44307/operacion", GetFilters()));
+            List = await ServiceContainer.OperacionService.GetOperaciones(GetFilters());
         }
 
         protected async Task OnDelete(int idFactura)
         {
-            var response = await Service.DeleteOperacion(idFactura);
+            var response = await ServiceContainer.OperacionService.DeleteOperacion(idFactura);
             if (response.IsSuccessStatusCode)
             {
-                List = await Service.GetOperaciones(FromDate.ToString("yyyy-MM-dd"), ToDate.ToString("yyyy-MM-dd"));
+                List = await ServiceContainer.OperacionService.GetOperaciones(GetFilters());
             }
         }
 
@@ -117,10 +123,10 @@ namespace OptimusCustomsWebApp.Views
                         DocumentoUpload.IdTipoDocumento = ((int)TipoDocumento);
                         DocumentoUpload.SourceFile = bytes;
 
-                        var response = await Service.UpdateDocumento(DocumentoUpload);
+                        var response = await ServiceContainer.OperacionService.UpdateDocumento(DocumentoUpload);
                         if (response.IsSuccessStatusCode)
                         {
-                            List = await Service.GetOperaciones(FromDate.ToString("yyyy-MM-dd"), ToDate.ToString("yyyy-MM-dd"));
+                            List = await ServiceContainer.OperacionService.GetOperaciones(GetFilters());
                             UpFileDialogOpen = false;
                             StateHasChanged();
                         }
@@ -163,7 +169,7 @@ namespace OptimusCustomsWebApp.Views
         {
             var query = new Dictionary<string, string> { { "idFactura", model.IdFactura == null ? "0" : model.IdFactura.ToString() },
                                                          { "idOperacion", model.IdOperacion.ToString()} };
-            QueryService.SetQueryString(TipoPagina.Operacion, query);
+            ServiceContainer.QueryService.SetQueryString(TipoPagina.Operacion, query);
             NavManager.NavigateTo(QueryHelpers.AddQueryString("https://localhost:44307/factura/redirect", query));
         }
 
@@ -183,6 +189,17 @@ namespace OptimusCustomsWebApp.Views
         private void OnObtainFile(IBrowserFile file)
         {
             BrowserFile = file;
+        }
+
+        private Dictionary<string, string> GetFilters()
+        {
+            return new Dictionary<string, string>
+            {
+                {"fromDate", FromDate.ToString("yyyy-MM-dd")},
+                {"toDate", ToDate.ToString("yyyy-MM-dd") },
+                {"idTipoOperacion", SelectedOperacionId.ToString() },
+                {"idUsuario", SelectedUsuarioId.ToString()},
+            };
         }
 
         private async Task OnViewFileAction(OperacionModel model, TipoDocumento tipoDocumento)
@@ -250,7 +267,7 @@ namespace OptimusCustomsWebApp.Views
             }
             else
             {
-                if(tipoDocumento == TipoDocumento.Factura)
+                if (tipoDocumento == TipoDocumento.Factura)
                 {
                     builder.OpenElement(1, "button");
                     builder.AddAttribute(2, "class", "btn btn-danger btn-sm");
@@ -270,7 +287,7 @@ namespace OptimusCustomsWebApp.Views
                     builder.AddMarkupContent(4, "<span class='oi oi-x' aria-hidden='true' />");
                     builder.CloseElement();
                 }
-                
+
             }
 
 

@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.AspNetCore.WebUtilities;
+using Newtonsoft.Json;
 using OptimusCustomsWebApp.Interface;
 using OptimusCustomsWebApp.Model;
 using System;
@@ -68,9 +69,9 @@ namespace OptimusCustomsWebApp.Data.Service
             return result;
         }
 
-        public async Task<List<OperacionModel>> GetOperaciones(string fromDate, string toDate)
+        public async Task<List<OperacionModel>> GetOperaciones(Dictionary<string, string> query)
         {
-            string endpoint = "http://localhost:43248/Operacion?" + "fromDate=" + fromDate + "&" + "toDate=" + toDate;
+            string endpoint = QueryHelpers.AddQueryString("http://localhost:43248/Operacion", query);
             var response = await httpClient.GetAsync(endpoint, HttpCompletionOption.ResponseHeadersRead);
 
             if (response.StatusCode == HttpStatusCode.OK)

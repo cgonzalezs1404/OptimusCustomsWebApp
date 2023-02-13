@@ -15,7 +15,7 @@ namespace OptimusCustomsWebApp.Interface
         /// <param name="fromDate"></param>
         /// <param name="toDate"></param>
         /// <returns></returns>
-        Task<List<OperacionModel>> GetOperaciones(string fromDate, string toDate);
+        Task<List<OperacionModel>> GetOperaciones(Dictionary<string, string> query);
 
         /// <summary>
         /// 
@@ -30,7 +30,7 @@ namespace OptimusCustomsWebApp.Interface
         /// <param name="model"></param>
         /// <returns></returns>
         Task<HttpResponseMessage> UpdateOperacion(OperacionModel model);
-        
+
         /// <summary>
         /// 
         /// </summary>
