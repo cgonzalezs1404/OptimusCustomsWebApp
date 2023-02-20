@@ -60,7 +60,7 @@ namespace OptimusCustomsWebApp.Views
                 FromDate = Convert.ToDateTime(fromDate);
                 ToDate = Convert.ToDateTime(toDate);
                 SelectedOperacionId = Convert.ToInt32(tipoOperacion);
-                SelectedOperacionId = Convert.ToInt32(usuario);
+                SelectedUsuarioId = Convert.ToInt32(usuario);
             }
             else
             {
@@ -69,8 +69,7 @@ namespace OptimusCustomsWebApp.Views
                 SelectedOperacionId = 0;
                 SelectedUsuarioId = Usuario == null ? 0 : Usuario.IdUsuario.Value;
             }
-            List = await ServiceContainer.OperacionService.GetOperaciones(GetFilters());
-            
+            List = await ServiceContainer.OperacionService.GetOperaciones(GetFilters()); 
             Thread.Sleep(500);
             ServiceContainer.IsBusy = false;
 
@@ -78,6 +77,7 @@ namespace OptimusCustomsWebApp.Views
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
+            Usuario = await ServiceContainer.UsuarioService.GetSessionData();
             if (Usuario != null && (Usuario.Username == null && Usuario.Password == null))
             {
                 await JSRuntime.InvokeAsync<string>("clientJsMethods.RedirectTo", "/login");

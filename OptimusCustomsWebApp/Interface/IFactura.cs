@@ -19,7 +19,7 @@ namespace OptimusCustomsWebApp.Interface
         /// <param name="fromDate"></param>
         /// <param name="toDate"></param>
         /// <returns></returns>
-        Task<List<FacturaModel>> GetFacturas(DateTime fromDate, DateTime toDate);
+        Task<List<FacturaModel>> GetFacturas(Dictionary<string, string> query);
         /// <summary>
         /// 
         /// </summary>

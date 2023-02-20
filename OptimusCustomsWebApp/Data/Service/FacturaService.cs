@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using System.Net;
 using System.Net.Http.Headers;
 using System.IO;
+using Microsoft.AspNetCore.WebUtilities;
 
 namespace OptimusCustomsWebApp.Data.Service
 {
@@ -24,17 +25,70 @@ namespace OptimusCustomsWebApp.Data.Service
             this.httpClient = httpClient;
         }
 
-        public async Task<List<FacturaModel>> GetFacturas(DateTime fromdate, DateTime toDate)
+        public async Task<List<FacturaModel>> GetFacturas(Dictionary<string, string> query)
         {
-            string endpoint = "http://localhost:43248/Factura?" + "fromDate=" + fromdate.ToString("yyyy-MM-dd") + "&" + "toDate=" + toDate.ToString("yyyy-MM-dd");
-            var list = await httpClient.GetFromJsonAsync<List<FacturaModel>>(endpoint);
-            return list;
+            string endpoint = QueryHelpers.AddQueryString("http://localhost:43248/Factura", query);
+            var response = await httpClient.GetAsync(endpoint, HttpCompletionOption.ResponseHeadersRead);
+
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                if (response.Content is object && response.Content.Headers.ContentType.MediaType == "application/json")
+                {
+                    var contentStream = await response.Content.ReadAsStreamAsync();
+
+                    using var streamReader = new StreamReader(contentStream);
+                    using var jsonReader = new JsonTextReader(streamReader);
+
+                    JsonSerializer serializer = new JsonSerializer();
+
+                    try
+                    {
+                        return serializer.Deserialize<List<FacturaModel>>(jsonReader);
+                    }
+                    catch (JsonReaderException)
+                    {
+                        Console.WriteLine("Invalid JSON.");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("HTTP Response was invalid and cannot be deserialised.");
+                }
+            }
+            return null;
         }
 
-        public async Task<FacturaModel> GetFactura(int idFactura)
+        public async Task<FacturaModel> GetFactura(int id)
         {
-            var result = await httpClient.GetFromJsonAsync<FacturaModel>("http://localhost:43248/Factura/" + idFactura);
-            return result;
+            string endpoint = "http://localhost:43248/Factura/" + id;
+            var response = await httpClient.GetAsync(endpoint, HttpCompletionOption.ResponseHeadersRead);
+
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                if (response.Content is object && response.Content.Headers.ContentType.MediaType == "application/json")
+                {
+                    var contentStream = await response.Content.ReadAsStreamAsync();
+
+                    using var streamReader = new StreamReader(contentStream);
+                    using var jsonReader = new JsonTextReader(streamReader);
+
+                    JsonSerializer serializer = new JsonSerializer();
+
+                    try
+                    {
+                        return serializer.Deserialize<FacturaModel>(jsonReader);
+                    }
+                    catch (JsonReaderException)
+                    {
+                        Console.WriteLine("Invalid JSON.");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("HTTP Response was invalid and cannot be deserialised.");
+                }
+            }
+            return null;
         }
 
         public async Task<HttpResponseMessage> CreateFactura(FacturaModel model)

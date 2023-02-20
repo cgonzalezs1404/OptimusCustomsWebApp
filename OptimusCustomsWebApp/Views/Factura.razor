@@ -1,7 +1,7 @@
 ﻿@page "/factura"
 @using OptimusCustomsWebApp.Pages
 
-@if (Service.IsBusy)
+@if (ServiceContainer.IsBusy)
 {
     <div class="d-flex justify-content-center">
         <div class="spinner-border text-primary" style="width:100px; height:100px;" role="status">
@@ -23,66 +23,67 @@ else
                 <label class="search-label">Tipo:</label>
             </div>
             <div class="col">
-                <select class="form-control">
-                    <option>Todos</option>
-                    <option>Cliente</option>
-                    <option>Proveedor</option>
+                <select class="form-control" @bind="@SelectedTFacturaId">
+                    @foreach (var element in CatalogoTFactura)
+                    {
+                        <option value="@element.Id">@element.Nombre</option>
+                    }
                 </select>
             </div>
             <div class="col">
                 <label class="search-label">Razòn Social:</label>
             </div>
             <div class="col">
-                <select class="form-control">
-                    <option>Todos</option>
-                    <option>OPTIMUS CUSTOMS SA DE CV</option>
-                    <option>RECICLADOS Y METALES PELUCHE S DE RL DE CV</option>
-                    <option>JOSE RODRIGUEZ CANTERO</option>
+                <select class="form-control" @bind="@SelectedUsuarioId">
+                    @foreach (var element in CatalogoUsuarios)
+                    {
+                        <option value="@element.Id" selected="@(element.Id == Usuario.IdUsuario)">@element.Nombre</option>
+                    }
                 </select>
             </div>
         </div>
         <div class="row">
-            <div class="col">
+            <div class="col-md-2">
                 <label class="search-label">Hasta:</label>
             </div>
-            <div class="col">
+            <div class="col-md-2">
                 <input type="date" class="form-control" @bind="ToDate" />
             </div>
-            <div class="col">
+            <div class="col-md-2">
                 <label class="search-label">Estado:</label>
             </div>
-            <div class="col">
-                <select class="form-control">
-                    <option>Todos</option>
-                    <option>Normal</option>
-                    <option>Por vencer</option>
-                    <option>Vencido</option>
+            <div class="col-md-2">
+                <select class="form-control" @bind="@SelectedEFacturaId">
+                    @foreach (var element in CatalogoEFactura)
+                    {
+                        <option value="@element.Id" selected="@(element.Id == SelectedEFacturaId)">@element.Nombre</option>
+                    }
                 </select>
             </div>
-            <div class="col">
-                <label class="search-label">Factura aprobada:</label>
-            </div>
-            <div class="col">
-                <select class="form-control">
-                    <option>Todos</option>
-                    <option>Si</option>
-                    <option>No</option>
-                </select>
-            </div>
+            @*<div class="col">
+        <label class="search-label">Factura aprobada:</label>
+        </div>
+        <div class="col">
+        <select class="form-control">
+        <option>Todos</option>
+        <option>Si</option>
+        <option>No</option>
+        </select>
+        </div>*@
         </div>
         <button type="button" class="btn btn-primary" @onclick="@(async () => await OnSearch())"><span class="oi oi-browser" />Buscar</button>
         <button type="button" class="btn btn-warning"><span class="oi oi-reload" />Limpiar</button>
     </form>
+    <p></p>
+    <div class="btn-group" role="group">
+        <a class="btn btn-primary" href="/factura/create"><span class="oi oi-plus" /> Cargar Factura</a>
+    </div>
 
     <main class="main-container">
         <header class="main-header">
         </header>
         <div class="main-content">
-            @if (List == null)
-            {
-
-            }
-            else
+            @if (List != null)
             {
                 <div class="row">
                     <table class="table-main table-responsive">
@@ -152,9 +153,6 @@ else
             }
         </div>
         <footer class="main-footer">
-            <div class="btn-group" role="group">
-                <a class="btn btn-success" href="/factura/create"><span class="oi oi-plus" /> Cargar Factura</a>
-            </div>
         </footer>
     </main>
 }

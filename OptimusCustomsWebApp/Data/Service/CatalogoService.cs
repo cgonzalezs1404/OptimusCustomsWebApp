@@ -24,6 +24,18 @@ namespace OptimusCustomsWebApp.Data.Service
             return list;
         }
 
+        public async Task<List<CatalogoModel>> GetEstadoFactura()
+        {
+            var list = await httpClient.GetFromJsonAsync<List<CatalogoModel>>("http://localhost:43248/Catalogos/2");
+            return list;
+        }
+
+        public async Task<List<CatalogoModel>> GetTipoFactura()
+        {
+            var list = await httpClient.GetFromJsonAsync<List<CatalogoModel>>("http://localhost:43248/Catalogos/3");
+            return list;
+        }
+
         public async Task<List<CatalogoModel>> GetTipoOperacion()
         {
             var list = await httpClient.GetFromJsonAsync<List<CatalogoModel>>("http://localhost:43248/Catalogos/4");

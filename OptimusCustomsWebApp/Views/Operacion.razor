@@ -35,7 +35,7 @@ else
             </div>
             <div class="col">
                 <select class="form-control" @bind="@SelectedUsuarioId">
-                    @foreach(var element in CatalogoUsuarios)
+                    @foreach (var element in CatalogoUsuarios)
                     {
                         <option value="@element.Id" selected="@(element.Id == Usuario.IdUsuario)">@element.Nombre</option>
                     }
@@ -43,47 +43,46 @@ else
             </div>
         </div>
         <div class="row">
-            <div class="col">
+            <div class="col-md-2">
                 <label class="search-label">Hasta:</label>
             </div>
-            <div class="col">
+            <div class="col-md-2">
                 <input type="date" class="form-control" @bind="ToDate" />
             </div>
-            <div class="col">
-                <label class="search-label">Estado:</label>
-            </div>
-            <div class="col">
-                <select class="form-control">
-                    <option>Todos</option>
-                    <option>Normal</option>
-                    <option>Por vencer</option>
-                    <option>Vencido</option>
-                </select>
-            </div>
-            <div class="col">
-                <label class="search-label">Factura aprobada:</label>
-            </div>
-            <div class="col">
-                <select class="form-control">
-                    <option>Todos</option>
-                    <option>Si</option>
-                    <option>No</option>
-                </select>
-            </div>
+            @*<div class="col">
+        <label class="search-label">Estado:</label>
+        </div>
+        <div class="col">
+        <select class="form-control">
+        <option>Todos</option>
+        <option>Normal</option>
+        <option>Por vencer</option>
+        <option>Vencido</option>
+        </select>
+        </div>*@
+            @*<div class="col">
+        <label class="search-label">Factura aprobada:</label>
+        </div>
+        <div class="col">
+        <select class="form-control">
+        <option>Todos</option>
+        <option>Si</option>
+        <option>No</option>
+        </select>
+        </div>*@
         </div>
         <button type="button" class="btn btn-primary" @onclick="@(async () => await OnSearch())"><span class="oi oi-browser" />Buscar</button>
         <button type="button" class="btn btn-warning"><span class="oi oi-reload" />Limpiar</button>
     </form>
-
+    <p></p>
+    <div class="btn-group" role="group">
+        <a class="btn btn-primary" href="/operacion/create"><span class="oi oi-plus" /> Cargar Operación</a>
+    </div>
     <main class="main-container">
         <header class="main-header">
         </header>
         <div class="main-content">
-            @if (List == null)
-            {
-                <p><em>Loading...</em></p>
-            }
-            else
+            @if (List != null)
             {
                 <div class="row">
                     <table class="table-main table-responsive">
@@ -146,9 +145,7 @@ else
             }
         </div>
         <footer class="main-footer">
-            <div class="btn-group" role="group">
-                <a class="btn btn-success" href="/operacion/create"><span class="oi oi-plus" /> Cargar Operación</a>
-            </div>
+            
         </footer>
     </main>
 }
